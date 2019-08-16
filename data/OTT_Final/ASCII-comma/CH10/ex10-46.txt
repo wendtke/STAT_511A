@@ -1,0 +1,11 @@
+'TypeFamily','HighSchGrad','Frequency'
+'TwoParent','Yes',407
+'Single-Always','Yes',61
+'Single-Divorce','Yes',231
+'Step-NoCohab','Yes',124
+'Step-WithCohab','Yes',193
+'TwoParent','No',45
+'Single-Always','No',16
+'Single-Divorce','No',29
+'Step-NoCohab','No',11
+'Step-WithCohab','No',51

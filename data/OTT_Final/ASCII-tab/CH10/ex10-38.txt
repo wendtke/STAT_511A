@@ -1,0 +1,5 @@
+'Phenotype'	'Frequency'
+'Tall_cut-leaf'	926
+'Dwarf_cut-leaf'	293
+'Tall_potato-leaf'	288
+'Dwarf_potato-leaf'	104

@@ -1,0 +1,5 @@
+'Crime'	'Binge'	'Occasional'	'Never'
+'Violent'	0.321	0.071	0.039
+'Theft'	0.149	0.071	0.039
+'Other'	0.389	0.139	0.082
+'none'	0.141	0.719	0.84

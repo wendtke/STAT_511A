@@ -1,0 +1,5 @@
+'AirBags','SeatBeltUsed','Frequency'
+'Yes','Yes',8626
+'No','Yes',7374
+'Yes','No',10650
+'No','No',20550

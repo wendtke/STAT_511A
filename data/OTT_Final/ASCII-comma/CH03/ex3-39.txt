@@ -1,0 +1,10 @@
+'Group','LiteracyLevel','Frequency'
+'Shifting','Illerate',114
+'Shifting','Primary',10
+'Shifting','AtLeastMiddle',45
+'Settled','Illerate',76
+'Settled','Primary',2
+'Settled','AtLeastMiddle',53
+'Town','Illerate',93
+'Town','Primary',13
+'Town','AtLeastMiddle',208

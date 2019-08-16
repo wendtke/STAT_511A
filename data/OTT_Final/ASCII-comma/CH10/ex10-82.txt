@@ -1,0 +1,7 @@
+'Ethnic Group','SampleSize','Altered'
+'Anglo-Saxon',55,7
+'German',58,6
+'Latin',52,34
+'Italian',54,38
+'Spanish',30,20
+'AfricanAm',49,31

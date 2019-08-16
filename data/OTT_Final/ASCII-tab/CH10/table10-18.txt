@@ -1,0 +1,4 @@
+'Use'	'Fair'	'Good '	'Excellent'
+'Rare'	64	123	137
+'Occasional'	131	256	129
+'Frequent'	209	171	45

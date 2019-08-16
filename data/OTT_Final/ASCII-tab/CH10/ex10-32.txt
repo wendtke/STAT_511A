@@ -1,0 +1,6 @@
+'Response'	'Number'
+'DisagAlot'	166
+'DisagAlittle'	116
+'NoOpinion'	171
+'AgreeAlittle'	234
+'AgreeAlot'	542

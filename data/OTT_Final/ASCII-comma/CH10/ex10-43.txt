@@ -1,0 +1,5 @@
+'Age','Promotion','Frequency'
+'Upto39','Promoted',38
+'40&Over','Promoted',46
+'Upto39','NotPromoted',80
+'40&Over','NotPromoted',84

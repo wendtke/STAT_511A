@@ -1,0 +1,4 @@
+'Treatment','Treated','Control'
+'Leaf',11,37
+'Stem',29,39
+'None',60,24

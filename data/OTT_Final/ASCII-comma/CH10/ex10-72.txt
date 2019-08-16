@@ -1,0 +1,6 @@
+'C1','Basic','Moderate','Complex'
+'Strong_Curr',32,10,2
+'Mod_Curr',28,16,4
+'none',17,20,5
+'Mod_New',12,10,8
+'Strong_New',4,8,14

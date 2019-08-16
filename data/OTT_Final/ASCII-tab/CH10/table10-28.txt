@@ -1,0 +1,7 @@
+'Clinic'	'Type'	'Improved'	'Not Improved'
+'1'	'Drug'	35	15
+'1'	'Placebo'	26	24
+'2'	'Drug'	28	22
+'2'	'Placebo'	29	21
+'3'	'Drug'	37	13
+'3'	'Placebo'	24	26

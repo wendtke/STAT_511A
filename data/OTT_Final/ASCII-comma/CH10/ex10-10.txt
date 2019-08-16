@@ -1,0 +1,13 @@
+'Type','individuals'
+'Cough_or_cold',441
+'OTC_remedy',260
+'Pain',110
+'Capsules',57
+'Cough_remedies',44
+'Allergy',9
+'Liquid',35
+'Nasal',4
+'Drops',13
+'Sore-throat',9
+'Vaporizers',4
+'Rubs',9

@@ -1,0 +1,13 @@
+'School','Rating','Frequency'
+'Most desirable','Outstanding',21
+'Good','Outstanding',3
+'Adequate','Outstanding',14
+'Undesirable','Outstanding',10
+'Most desirable','Average',20
+'Good','Average',25
+'Adequate','Average',8
+'Undesirable','Average',7
+'Most desirable','Poor',4
+'Good','Poor',36
+'Adequate','Poor',2
+'Undesirable','Poor',6

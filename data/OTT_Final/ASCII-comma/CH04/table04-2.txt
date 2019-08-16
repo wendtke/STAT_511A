@@ -1,0 +1,3 @@
+'Category','Fire ','Auto','Other ','Total%'
+'Fraudulent',6,1,3,10
+'Nonfraud',14,29,47,90

@@ -1,0 +1,5 @@
+'AirBags'	'SeatBeltUsed'	'Frequency'
+'Yes'	'Yes'	4871940
+'No'	'Yes'	2902694
+'Yes'	'No'	870875
+'No'	'No'	1952211

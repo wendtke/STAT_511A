@@ -1,0 +1,7 @@
+'Program','Expend'
+'Nat.Def.',612
+'SS',852
+'Med&Med',821
+'NatDebt',253
+'SocialAid',562
+'Other',532

@@ -1,0 +1,5 @@
+'Cholesterol','BloodPressure','Frequency'
+'High','High',159
+'Low','High',78
+'High','Low',91
+'Low','Low',172

@@ -1,0 +1,6 @@
+'NumOutperf'	'Frequency'
+0	3
+1	23
+2	51
+3	39
+4	9

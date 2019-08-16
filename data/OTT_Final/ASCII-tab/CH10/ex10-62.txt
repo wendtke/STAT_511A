@@ -1,0 +1,7 @@
+'NumberBeetles'	'Frequency'
+'0'	678
+'1'	227
+'2'	56
+'3'	28
+'4'	8
+'5orMore'	14

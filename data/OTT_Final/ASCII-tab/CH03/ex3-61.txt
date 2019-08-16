@@ -1,0 +1,5 @@
+'Type'	'Negotation'	'Arbitration'	'Poststrike'
+'wage_increase'	8.2	9.42	8.4
+'Variance'	0.87	1.04	1.47
+'std_dev'	0.93	1.02	1.21
+'sample_size'	38	16	6

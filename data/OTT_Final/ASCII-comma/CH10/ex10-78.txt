@@ -1,0 +1,4 @@
+'Group','>=1','None'
+'Control',10,90
+'Low dose',14,86
+'High dose',19,81

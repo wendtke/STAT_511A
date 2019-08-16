@@ -1,0 +1,6 @@
+'policy','coal','oil-gas','other'
+'Coal',62,25,53
+'Oil-Gas',19,79,102
+'Nuclear',8,6,22
+'Solar-Wind',58,78,247
+'Fusion',3,12,26

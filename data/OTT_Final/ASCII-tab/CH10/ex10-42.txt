@@ -1,0 +1,9 @@
+'Age'	'Promotion'	'Frequency'
+'Under30'	'Promoted'	9
+'30-39'	'Promoted'	29
+'40-49'	'Promoted'	34
+'50&Over'	'Promoted'	12
+'Under30'	'NotPromoted'	41
+'30-39'	'NotPromoted'	39
+'40-49'	'NotPromoted'	46
+'50&Over'	'NotPromoted'	38

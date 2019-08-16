@@ -1,0 +1,6 @@
+'Concussion','Yes','No'
+'Football',32,66
+'Hockey',25,58
+'Soccer',20,49
+'Basketball',13,31
+'Lacrosse',7,24

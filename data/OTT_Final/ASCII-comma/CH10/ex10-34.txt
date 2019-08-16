@@ -1,0 +1,5 @@
+'EdLevel','Number'
+'Elementary',278
+'Secondary',523
+'CollegeCred',98
+'CollegeDeg',101

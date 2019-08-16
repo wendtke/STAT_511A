@@ -1,0 +1,5 @@
+'Outcome','SeatBeltUsed','Frequency'
+'Killed','Yes',16001
+'Survived','Yes',7758634
+'Killed','No',31199
+'Survived','No',2791887

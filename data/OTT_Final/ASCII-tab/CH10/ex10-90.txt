@@ -1,0 +1,7 @@
+'Politics'	'Tolerance'	'Frequency'
+'Left'	'Low'	36
+'Right'	'Low'	95
+'Left'	'Medium'	44
+'Right'	'Medium'	64
+'Left'	'High'	84
+'Right'	'High'	42

@@ -1,0 +1,13 @@
+'JobHistory'	'Source'	'Frequency'
+'Promoted'	'Within'	13
+'Promoted'	'Related'	4
+'Promoted'	'Unrelated'	10
+'SamePos.'	'Within'	32
+'SamePos.'	'Related'	8
+'SamePos.'	'Unrelated'	18
+'Resigned'	'Within'	9
+'Resigned'	'Related'	6
+'Resigned'	'Unrelated'	10
+'Dismissed'	'Within'	3
+'Dismissed'	'Related'	3
+'Dismissed'	'Unrelated'	4

@@ -1,0 +1,6 @@
+'batteries'	'Frequency'
+0	100
+1	126
+2	60
+3	13
+4	1

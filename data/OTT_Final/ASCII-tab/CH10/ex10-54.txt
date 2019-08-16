@@ -1,0 +1,5 @@
+'Outcome'	'AirBagInstalled'	'Frequency'
+'Killed'	'Yes'	19276
+'Survived'	'Yes'	5723539
+'Killed'	'No'	27924
+'Survived'	'No'	4826982

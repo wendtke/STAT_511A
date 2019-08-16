@@ -1,0 +1,5 @@
+'crime','Binge','Occasional','Never'
+'Violent',114,27,7
+'Theft',53,27,7
+'Other',138,53,15
+'None',50,274,152

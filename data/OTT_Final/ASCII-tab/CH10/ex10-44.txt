@@ -1,0 +1,13 @@
+'State'	'Rating'	'Frequency'
+'Cal'	'Adopted'	39
+'Mich'	'Adopted'	55
+'NewYork'	'Adopted'	19
+'Oregon'	'Adopted'	22
+'Penn'	'Adopted'	24
+'Wash'	'Adopted'	30
+'Cal'	'NotAdopted'	92
+'Mich'	'NotAdopted'	69
+'NewYork'	'NotAdopted'	114
+'Oregon'	'NotAdopted'	88
+'Penn'	'NotAdopted'	83
+'Wash'	'NotAdopted'	77
