@@ -1,0 +1,38 @@
+---
+title: "Basics of Coding in R"
+---
+
+In this example, we see some of the coding nuance in R.  We will use only R Markdown to run code chunks, but also conisder practicing similar code in R scipt.
+
+```{r}
+# R is case sensitive
+# Spaces really do not matter, but can make code more readable
+
+y <- 5
+Y<-6
+y;Y  # this comment comes after executable code, and sends both y and Y as output on same line
+```
+
+
+For reports, it is better to include lengthy comments and descriptions outside of R coding using R Markdown.  This will not work within an R script.  R scripts imply that each line is executable code unless a # precedes text.
+```{r}
+#Unfortunately if you have a comment within the R code (that is between the 3 tick marks) that is too long) RMarkdown will simply truncate it in the report file (more on this later).  Otherwise wrapping lines is ok, but not recommended since code is harder to read. Note that this still remains as green commented code even though a pound sign doesn't precede each line. A hard return creates a new line however.
+y
+Y  # run this chunk to see that these values are still defined from above
+```
+
+You might have seen by now (or already knew), that there are lots of ways to run code in R Markdown.  Later we will run code in R script.  Generally, getting code to run in R scipt is easier to deal with.  Then when ready, you can create a R Markdown file with R code that you already know runs ok.  From the R Markdown you can then create code that knits to a more finalized R code and output report, more of this will be covered in Topic 7 of this R Basics Bootcamp.
+
+```{r}
+# for practice, run the following by holding down the command key (Macs) or ctrl key (windows) and enter/return
+# you only need your cursor to be on the line you wish to run
+# note that to run sequential lines, you need only to hit enter again (while holding command/cntrl)
+
+Y <- c(2,3,4)  #cap Y redefined, note, there is no output when just running this and the next line 
+y = c(5, 6, 7, 8, 13, 1)  #lower case also now a vector
+Y;y        #this actually outputs values
+mean(y)    #this line also provides output
+round(meany(y), 2)  #function within a function
+2*round(meany(y), 2)  # times 2
+help(round)  #get help by typing, but easier to just use the window to the write to search for help.
+```

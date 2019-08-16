@@ -1,0 +1,21 @@
+---
+title: "Managing Data"
+---
+
+```{r}
+data()
+data(mtcars)
+mtcars
+str(mtcars)
+mtcars$cyl <- as.factor(mtcars$cyl)
+mtcars$wtlbs <- mtcars$wt * 2000
+str(mtcars)
+
+library(plyr)
+arrange(mtcars, cyl)
+# to include column names
+myCars <- cbind(vehicle=row.names(mtcars), mtcars)
+arrange(myCars, cyl, mpg) #sorts first by cyl then by mpg
+# sort with displacement in descending order
+arrange(myCars, cyl, desc(disp))
+```

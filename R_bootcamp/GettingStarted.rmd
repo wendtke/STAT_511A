@@ -1,0 +1,27 @@
+---
+title: "First R Markdown Script"
+---
+
+When you create a new R Markdown something like the following will appear automatically, but we will not use the Knit button to author documents for now. cars is a "built-in" dataset.  Note in the gray box there is a green play button.
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+# You can write code in chunks that look like this.
+# This chunk uses the code summary (cars) to get a five-number (plus mean).
+# To run the code click the Green play button to the right. Try it!
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r cars}
+plot(cars)
+```
+
