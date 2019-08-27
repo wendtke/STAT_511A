@@ -1,0 +1,66 @@
+---
+title: "Week 1/Ch 2 In-Class Notes"
+author: "Kathleen Wendt"
+date: "8/27/2019"
+output: html_document
+---
+
+# Statistical Methods
+
+## Descriptive Statistics
+
+Collect and describe data (sample).
+
+## Inferential Statistics
+
+Collect, analyze, interpret, and make inferences/conclusions about data. Goal is to make inferences about larger population.
+
+# Terms
+
+- Observation unit
+- Population: complete set of observation units
+- Sample: subset
+- Census: when sample equals population
+
+# EXTRA
+
+Denver Post: 2010 census missed more than 1.5 mil minorities (AA 2.1%, Latinos 1.5%, renters, young men, homeless) but double-counted those with two homes. 
+
+# Terms continued
+
+- Variable
+- Statistic: numerical descriptive measure for sample (y bar)
+- Parameter: " for population (mu); true but unknown
+
+# EXTRA
+
+Denver Post: Netherlands (men - 6 ft) & Latvia (women - 5' 6") lead world for people's height. 
+
+# Return to Statistical Methods
+
+95% confidence interval to capture true population mean.
+
+## First Principle of Statistical Inference
+
+Make inference to population from which you sample. 
+
+1. 50 observations of 1 cow (unreplicated or pseudoreplication) -- must replicate by having more cows. 
+
+2. Limited sample to one strain or batch. 
+
+3. NIH-funded study of BABL/c mice to improve breast cancer treatment. 
+- "IT SAYS ONLY IN MICE." 
+  - model organism / animal studies: try to extrapolate findings from mice to humans BUT be careful
+  
+# Target vs. Sampled Populations
+
+In modeled organisms, samples are usually far from target population. 
+
+e.g., river diagram (Cornfield and Tukey) - bridge from sample to target population (stat inferences, scientific judgement)
+
+# Planning Research Study
+
+1, Specific aims and research questions
+2. Variables of interest (response, predictor)
+3. Study design
+4. Execute study
