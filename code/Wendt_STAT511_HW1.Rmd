@@ -1,0 +1,104 @@
+---
+title: 'STAT 511A: Homework 1'
+author: "Kathleen Wendt"
+date: "8/29/2019"
+output: pdf_document
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=12, fig.height=8, fig.path='.././figs/',
+                      warning=FALSE, message=FALSE)
+```
+
+# Load packages
+
+```{r packages}
+library(tidyverse)
+library(magrittr)
+```
+
+# Question 1 (Textbook 3.30)
+
+## Read data
+
+```{r lumber_data}
+lumber_data <- readr::read_csv("../data/OTT_Final/ASCII-comma/CH03/ex3-30.txt", 
+                               quote = "'")
+```
+
+## Data structure
+
+```{r data_str_lum}
+tibble::glimpse(lumber_data)
+```
+
+## Distribution
+
+```{r data_hist}
+lumber_hist <- hist(lumber_data$Number, 
+     col = "brown", 
+     main = "Lumber")
+```
+The distribution of the lumber is approximately normal.
+
+
+## Measures of Central Tendency
+
+```{r lumber_mean}
+mean(lumber_data$Number)
+```
+
+```{r lumber_median}
+median(lumber_data$Number)
+```
+
+# Question 2 (Textbook 3.7)
+
+## Read data
+
+```{r survival_data}
+survival_data <- readr::read_csv("../data/OTT_Final/ASCII-comma/CH03/ex3-7.txt",
+                                 quote = "'")
+```
+
+## Data structure 
+
+```{r data_str_sur}
+tibble::glimpse(survival_data)
+```
+
+## Measures of Central Tendency
+
+### Standard Therapy
+
+```{r survival_st_mean}
+mean(survival_data$StandardTherapy)
+```
+
+```{r survival_st_sd}
+sd(survival_data$StandardTherapy)
+```
+
+### New Therapy 
+
+```{r survival_nt_mean}
+mean(survival_data$NewTherapy)
+```
+
+```{r survival_nt_sd}
+sd(survival_data$NewTherapy)
+```
+
+## Boxplots 
+
+### Convert data
+
+```{r convert}
+survival_data <- survival_data %>%
+  tidyr::gather(key = "therapy", 
+                value = "survival")
+```
+
+```{r boxplot}
+boxplot(survival ~ therapy, data = survival_data)
+```

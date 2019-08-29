@@ -1,7 +1,7 @@
 ---
 title: "Week 1/Ch 2 In-Class Notes"
 author: "Kathleen Wendt"
-date: "8/27/2019"
+date: "8/27/2019 & 8/29/2019"
 output: html_document
 ---
 
@@ -64,3 +64,63 @@ e.g., river diagram (Cornfield and Tukey) - bridge from sample to target populat
 2. Variables of interest (response, predictor)
 3. Study design
 4. Execute study
+
+# Experimental vs. Observational Studies
+
+## Experimental
+
+Random assignment; causal inferences possible
+
+- Benefit: Higher internal validity
+
+## Observational
+
+Observe or measure but no manipulation (no randomization); ecological study (only have data at aggregated level)
+
+- Limitation: confounding variables
+- Association is not causation (cannot draw causal conclusion from observational study)
+- Benefit: generalizability; higher external validity
+
+### Types of Observational Studies
+
+1. Sample survey: cross-sectional
+2. Prospective: Follow subjects
+3. Retrospective: Subjects asked about past
+
+# EXTRA
+
+Baby Einstein / Brainy Baby and language development
+- American Academy of Pediatrics: 0 min for 0-18/24 mos
+- Almost causal conclusion (more viewing, more of an effect)
+- Random selection vs. random assignment
+
+Disney slams UW Baby Einstein **observational** study 
+
+_Study Review_
+- Are the samples representative?
+- Language? Bilingualism?
+- Self-report
+
+# Sampling Methods
+
+## Sampling Frame
+
+List of sampling units from which sampling is done.
+
+## Simple Random Sampling
+
+Select units randomly from sampling frame.
+
+## Systematic Sampling
+
+Take units from sampling frame according to method, e.g., every 50 m along a transect.
+
+## Stratified Random Sampling
+
+Organize frame into groups/strata of like units. Sample independently within each stratum. 
+
+## Cluster Sampling
+
+First sample "clusters" of units then measure every unit within each cluster in the sample. Saves time locating clusters.
+
+## NO HAPHAZARD OR SELF-SELECTED SAMPLING.
