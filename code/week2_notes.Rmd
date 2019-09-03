@@ -1,0 +1,158 @@
+---
+title: "Week 2 in-class notes"
+author: "Kathleen Wendt"
+date: "9/3/2019 & 9/4/2019"
+output: html_document
+---
+
+# Types of Data
+
+## Categorical/Qualitative/Factor
+
+Categories; no natural ordering (e.g., eye color, gender)
+
+## Numerical/Quantitative/Continuous
+
+Numerical; discrete or continuous (e.g., age, time)
+
+### Discrete
+
+Only take some values; counting (e.g., age in years, number of children)
+How many?
+
+### Continuous 
+
+Can take any valus within given interval (e.g., height, weight)
+How much?
+
+# Describing data for single (numerical) variable
+
+## Measures of Central Tendency
+
+1. Mode
+2. Median
+3. Mean (see paper notes for equation)
+
+# Other information
+
+## _pth_ percentile 
+
+- median - 50th
+- Q1 - 25th
+- Q3 - 75th
+
+## Five-number summary (boxplot)
+
+- min
+- Q1
+- median
+- Q3
+- max
+- mean
+
+# Measures of Variability/Spread
+
+- Range = max - min
+- IQR = Q3 - Q1
+- variance (s squared) (see paper notes for equation and description)
+- standard deviation (s) (see paper notes for equation and description)
+
+# Reminder
+
+- Population: complete set of measurements
+- Sample: subset
+
+# Parameter vs. Statistic
+
+- population mean = "mu"
+- sample mean = "y bar"
+- population SD = sigma
+- sample SD = s
+
+# Exploratory Data Analysis (John Tukey, Bell Labs)
+
+Do the simple things first. Simple summary statistics and simple graphics. Look at the data first (more) and get to know the data before modeling.
+
+# Histograms
+
+- Start with some equally spaced intervals
+- Count number of observations (frequency) within each interval
+- Relative frequency is the frequency divided by _n_
+- Histogram: graph of frequencies or relative frequencies
+
+## Shapes
+
+See Slide 10 for sample histogram shapes
+
+1. symmetric, unimodal - mean and median will be close
+2. bimodal
+3. skewed right
+4. skewed left
+**for skewed distributions, sample mean and median (more robust against skew) will be different
+
+# Boxplots
+
+- The boxplot is a graph of the 5 number summary with outliers marked
+- Outlier: value that lies >1.5 IQR from Q1 or Q3 (but what about 2.2 as in HDFS 650??)
+- Violin plot for "width" of data in boxplot
+
+# EXTRA
+
+1. WSJ "The Numbers [Guy]" on Wedding (08/24/07)
+"Weddings are not the budget drains some surveys suggest"
+- mean ($30k) can be sensitive to outliers and skewness
+- median ($15k)
+- selection bias
+
+2. MSN Money Credit Cards (01/16/08)
+"The basics: The truth about credit card debt"
+- Average American $9k in credit card debt (mean)
+- 50%+ of Americans owe $0 in credit card debt (median = 0)
+
+# Random Variables 
+
+Use capital letters to denote RVs
+
+## Probability (P)
+
+Numerical quantity that expresses likelihood of event. Values between 0-1.
+
+- Relative frequency intrepretation of probability: Probability of event is interpreted as relative frequency (proportion of times) the event occurs in indefinite repetitions of chance operation
+P(Heads) = 0.5 
+
+## Random Variable (RV)
+
+Value results from measurement on some type of random processes
+
+## Probability Distribution for RV
+
+- Total probability equals 1
+- For discrete: sum P of each outcome
+- For continuous: formula to describe curve; area under curve = 1
+
+## Example of Discrete RV
+
+Y as RV that gives the outcome of single roll of fair die
+y = observed value
+
+3 ways to show same information (see paper notes)
+- Table
+- Formula
+- Graph 
+
+# Continuous RV Example
+
+## Normal (Gaussian) family of distributions
+
+Don't call bell-shaped (others also have that shape)
+
+e.g., height, birth weight
+
+- Many populations can be described as normal distributions.
+- Each normal distribution is defined by its center (mean; mu) and spread/variability (SD; sigma).
+- If variable Y follows normal distribution with mu adn sigma, then we write Y~_N_(mu, sigma)
+
+### Examples
+
+1. Standard Normal (mu = 0, sigma = 1)
+** look at slide for changes in mu or sigma and changes in shape
