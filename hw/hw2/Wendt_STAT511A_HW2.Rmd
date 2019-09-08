@@ -1,0 +1,172 @@
+---
+title: "STAT 511A HW 2"
+author: "Kathleen Wendt"
+output:
+  pdf_document: default
+---
+
+# Load packages
+
+```{r}
+library(readr)
+library(magrittr)
+library(ggplot2)
+```
+
+# Part 1 
+
+Assume Z has a standard normal distribution.
+
+## Part 1A
+
+P(Z <= 0.64)
+
+```{r ans1a}
+pnorm(0.64)
+```
+
+## Part 1B
+
+P(Z <= -0.37)
+
+```{r ans1b}
+pnorm(-0.37)
+```
+
+## Part 1C
+
+P(Z > 1.24)
+
+```{r ans1c}
+pnorm(1.24, lower.tail = FALSE)
+1 - pnorm(1.24)
+```
+
+## Part 1D
+
+P(-0.37 <= Z <= 1.15)
+
+```{r ans1d}
+pnorm(1.15) - pnorm(-0.37)
+```
+
+## Part 1E
+
+Find _z_ such that P(Z <= z) = 0.3300
+
+```{r ans1e}
+qnorm(0.3300)
+```
+
+## Part 1F 
+
+Find _z_ such that P(Z > z) = 0.1841
+
+```{r ans1f}
+qnorm(0.1841, lower.tail = FALSE)
+```
+
+# Part 2
+
+Assume that Y has a normal distribution with mean of 5.4 and standard deviation of 0.2. 
+
+## Part 2A
+
+P(Y <= 5.7)
+
+```{r ans2a}
+pnorm(5.7, mean = 5.4, sd = 0.2)
+```
+
+## Part 2B
+
+P(Y > 5.3)
+
+```{r ans2b}
+pnorm(5.3, mean = 5.4, sd = 0.2, lower.tail = FALSE)
+```
+
+## Part 2C
+
+P(5.2 <= Y <= 5.5)
+
+```{r ans2c}
+pnorm(5.5, mean = 5.4, sd = 0.2) - pnorm(5.2, mean = 5.4, sd = 0.2)
+```
+
+## Part 2D
+
+Find the value _y_ such that P(Y <= y) = 0.85.
+
+```{r ans2d}
+qnorm(0.85, mean = 5.4, sd = 0.2)
+```
+
+# Part 3 
+
+Let Y have a _skewed_ distribution ($\mu$ = 80, $\sigma$ = 5). Suppose a random sample of _n_ = 100 is drawn from the population.
+
+## Part 3A
+
+Based on the Chebyshev's Rule (selected based on skewness), at least 75% of the sample data will lie between 70 and 90.
+
+## Part 3B
+
+The sample distribution would be similar to the population distribution, such that its $\mu$ would be close to 80 and its $\sigma$ would be close to 5 with a similar level of skewness. Based on the Central Limit Theorem, if more and more samples of 100 are drawn randomly, the sampling distribution of the sample mean will approach normality.
+
+# Part 4 
+
+Seed Data
+
+## Part 4A
+
+### Read Data
+
+```{r data4a}
+seeds <- read_csv("Seeds.csv")
+```
+
+### Histogram
+
+```{r hist4a}
+qplot(Weight, data = seeds) +
+  stat_bin(bins = 10) + 
+  ggtitle("Histogram of Seed Weight")
+```
+
+### Sample Mean
+
+```{r mean4a}
+mean(seeds$Weight)
+```
+
+### Sample Standard Deviation
+
+```{r sd4a}
+sd(seeds$Weight)
+```
+
+## Part 4B - **I might need to redo some of this later this week**
+ 
+Construct a 95% confidence interval for seed $\mu$.
+
+```{r ci4b}
+seed_ci <- t.test(seeds$Weight)
+seed_ci$conf.int
+```
+
+The 95% confidence interval of seed weight is 479.12 and 573.06. 
+
+## Part 4C 
+
+Interpret confidence interval.
+
+A confidence interval is an interval of values computed from sample data that is almost sure to cover the true population parameter. In this case, if 100 samples of seeds' weights were collected, 95 of the samples would contain the true $\mu$ (population mean seed weight) (between 479.12 and 573.06).
+
+## Part 4D
+
+Is the CI valid? Discuss whether assumptions were satisfied. 
+
+The validity of the above confidence interval is unknown. 
+
+
