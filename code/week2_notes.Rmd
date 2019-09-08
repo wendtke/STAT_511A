@@ -156,3 +156,43 @@ e.g., height, birth weight
 
 1. Standard Normal (mu = 0, sigma = 1)
 ** look at slide for changes in mu or sigma and changes in shape
+
+P(Z =< 1.31)
+```{r}
+pnorm(1.31)
+```
+
+Ex2: P(Z > 1.72)
+```{r}
+1 - pnorm(1.72)
+
+pnorm(1.72, lower.tail = FALSE)
+```
+
+P(Z > z) = 0.95 (Inverse)
+```{r}
+qnorm(0.05)
+```
+
+P(Y =< 8)
+```{r}
+pnorm((8-5)/2)
+
+pnorm(8, mean = 5, sd = 2)
+```
+
+Find y such that P(Y =< y) = 0.975
+```{r}
+2*qnorm(0.975)+5
+
+qnorm(0.975,mean=5,sd=2)
+```
+
+# EXTRA
+
+Johann Carl Friedrich Guass - "Little Guass Formula" (5,050)
+- math, geo, physics, etc.
+- normal density function
+- regression - Least Squares method
+- "few but ripe"
+
