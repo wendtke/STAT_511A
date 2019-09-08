@@ -7,7 +7,7 @@ output:
 
 # Load packages
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 library(readr)
 library(magrittr)
 library(ggplot2)
@@ -122,13 +122,13 @@ Seed Data
 
 ### Read Data
 
-```{r data4a}
+```{r data4a, message=FALSE}
 seeds <- read_csv("Seeds.csv")
 ```
 
 ### Histogram
 
-```{r hist4a}
+```{r hist4a, message=FALSE}
 qplot(Weight, data = seeds) +
   stat_bin(bins = 10) + 
   ggtitle("Histogram of Seed Weight")
@@ -165,8 +165,25 @@ A confidence interval is an interval of values computed from sample data that is
 
 ## Part 4D
 
-Is the CI valid? Discuss whether assumptions were satisfied. 
+The validity of the above confidence interval is medium. In order to construct a valid confidence interval of a population mean ($\mu$), four assumptions need to be met: 
 
-The validity of the above confidence interval is unknown. 
+1. Random sample. In this instance, the seeds were randomly sampled.
+2. Independent observations. It is unknown whether the seeds were somehow interdependent; however, it is unlikely.
+3. Normally distributed data. The sample distribution is not normal but might approach normality with larger sample sizes.
+4. Large sample size. The current sample size (n = 25) does not meet this assumption. 
 
+# Part 5
 
+Describe how the following affect the width of a confidence interval.
+
+## Part 5A 
+
+Increasing sample size would _decrease_ the width of a confidence interval.
+
+## Part 5B
+
+Increasing the confidence level would _increase_ the width of a confidence interval.
+
+## Part 5C
+
+Increasing standard deviation would not affect the width of a confidence interval; the width would _stay the same_.
