@@ -1,0 +1,111 @@
+---
+title: "HW0.Rmd"
+author: "Caroline Wendt"
+output: pdf_document
+header-includes:
+  - \usepackage{xcolor}
+  - \usepackage{framed}
+---
+
+\colorlet{shadecolor}{gray!10}
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+\newcommand{\answerstart}{ \colorlet{shadecolor}{violet!20}
+\begin{shaded} }
+\newcommand{\answerend}{  \end{shaded} \colorlet{shadecolor}{gray!10}}
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+# Problem 1 
+
+## part 1(a)
+We simulate data from a simple linear regression model and make a plot.
+```{r simulatedata}
+set.seed(2019)
+x = runif(20, 10, 20)
+y = rnorm(20, mean = 3 + 5*x,  sd = 4)
+plot(x, y)
+```
+
+## part 1 (b)
+
+\answerstart
+
+Looking at the plot of x vs y, there appears to be a strong, positive linear relationship.
+
+\answerend
+
+# Problem 2
+
+We will fit a simple linear regression model to the data. The model is $y_i = \beta_0 + \beta_1x_i + \epsilon_i$ for $i = 1, \ldots, n$. There are assumptions on the errors $\epsilon_i$ as follows:
+
+  1. the errors have mean 0, $E(\epsilon_i) = 0$
+  2. the errors have the same variance (homoskedastic), $V(\epsilon_i) = \sigma^2$
+  3. the errors are independent
+  4. the errors follow a normal distribution
+  
+We summarize the assumptions as $\epsilon_i \sim^{i.i.d} N(0, \sigma^2)$.
+
+# Problem 3
+We estimate the simple linear regression model and display the summary.
+```{r fitmodel}
+#fit the model
+model1 = lm(y ~ x)
+#look a summary - this prints the estimated coefficients
+summary(model1)
+```
+
+# Problem 4
+
+## part 4(a)
+
+\answerstart
+
+The \textbf{estimated} slope is $\widehat{\beta}_1 = 5.26$ and the \textbf{estimated} intercept is $\widehat{\beta}_0 = -0.95$. We can also see $\widehat{\sigma} = 5.17$.
+
+\answerend
+
+## part 4(b)
+
+\answerstart
+
+Interpretation of the slope: for each 1 unit increase in $x$, the average value of $y$ *increases* by an estimated 5.26.
+
+\answerend
+
+## part 4(c)
+
+```{r anova}
+anova(model1)
+```
+\answerstart
+
+The SSE for this model is 480.4.
+
+\answerend
+
+## part 4(d)
+```{r SStot}
+SSreg <- anova(model1)[1,2]
+SSreg
+SSres <- anova(model1)[2,2]
+SSres
+SStot <- SSreg + SSres
+round(SStot, 1)
+```
+
+\answerstart
+
+The sum of squares total for this model is 4900.4.
+
+\answerend
