@@ -1,0 +1,22 @@
+---
+title: "Week 3 (Chapter 5) Lecture Notes"
+author: "Kathleen Wendt"
+date: "9/10/2019 & 9/12/2019"
+output: pdf_document
+---
+
+Confidence Intervals
+
+Student t distribution - 95% CI
+To determine t-score
+```{r}
+qt(0.975, df = 19)
+```
+
+View Week 5 R example notes
+
+# Extra - William Sealy Gosset
+ 
+- Developed the Student's t distribution
+- Guinness beer
+- Gosset, Pearson, and Fisher
