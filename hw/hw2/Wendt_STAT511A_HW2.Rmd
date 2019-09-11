@@ -7,9 +7,10 @@ output:
 
 # Load packages
 
-```{r, message=FALSE, warning=FALSE}
+```{r packages, message=FALSE, warning=FALSE}
 library(readr)
 library(magrittr)
+library(tibble)
 library(ggplot2)
 ```
 
@@ -39,7 +40,6 @@ P(Z > 1.24)
 
 ```{r ans1c}
 pnorm(1.24, lower.tail = FALSE)
-1 - pnorm(1.24)
 ```
 
 ## Part 1D
@@ -112,7 +112,7 @@ Based on the Chebyshev's Rule (selected based on skewness), at least 75% of the 
 
 ## Part 3B
 
-The sample distribution would be similar to the population distribution, such that its $\mu$ would be close to 80 and its $\sigma$ would be close to 5 with a similar level of skewness. Based on the Central Limit Theorem, if more and more samples of 100 are drawn randomly, the sampling distribution of the sample mean will approach normality.
+The sampling distribution would have mean = $\mu = 80$ and its standard deviation would be $\sigma/\sqrt(n) = 5/\sqrt(100) = 0.5$. Based on the Central Limit Theorem, for any variable $Y$, with a finite mean of $\mu$ and standard deviation of $\sigma$, $\bar{x}$ converges to a _normal distribution_ with mean of $\mu$ and standard deviation of $\sigma/\sqrt(n)$, as $n$ increases.
 
 # Part 4 
 
@@ -122,15 +122,21 @@ Seed Data
 
 ### Read Data
 
-```{r data4a, message=FALSE}
+```{r read4a, message=FALSE}
 seeds <- read_csv("Seeds.csv")
+```
+
+### Check Data
+
+```{r data4a}
+glimpse(seeds)
 ```
 
 ### Histogram
 
 ```{r hist4a, message=FALSE}
-qplot(Weight, data = seeds) +
-  stat_bin(bins = 10) + 
+qplot(Weight, data = seeds) + 
+  stat_bin(bins = 5) +
   ggtitle("Histogram of Seed Weight")
 ```
 
@@ -146,7 +152,7 @@ mean(seeds$Weight)
 sd(seeds$Weight)
 ```
 
-## Part 4B - **I might need to redo some of this later this week**
+## Part 4B
  
 Construct a 95% confidence interval for seed $\mu$.
 
@@ -155,21 +161,25 @@ seed_ci <- t.test(seeds$Weight)
 seed_ci$conf.int
 ```
 
-The 95% confidence interval of seed weight is 479.12 and 573.06. 
-
 ## Part 4C 
 
 Interpret confidence interval.
 
-A confidence interval is an interval of values computed from sample data that is almost sure to cover the true population parameter. In this case, if 100 samples of seeds' weights were collected, 95 of the samples would contain the true $\mu$ (population mean seed weight) (between 479.12 and 573.06).
+A 95% confidence interval is a random interval which, if the model is true, would include the true value of the population parameter $\mu$ with a probability of 95%. In the case of seed weight $\mu$, the 95% confidence interval `r seed_ci$conf.int` is an interval calculated by a method such that under repeated sampling, 95% of such intervals would include $\mu$. Stated differently, 95% of all 95% confidence intervals for seed weight $\mu$ contain $\mu$.
 
 ## Part 4D
 
-The validity of the above confidence interval is medium. In order to construct a valid confidence interval of a population mean ($\mu$), four assumptions need to be met: 
+The validity of the above confidence interval is adequate. In order to construct a valid confidence interval of a population mean ($\mu$), four assumptions need to be met: 
 
 1. Random sample. In this instance, the seeds were randomly sampled.
-2. Independent observations. It is unknown whether the seeds were somehow interdependent; however, it is unlikely.
-3. Normally distributed data. The sample distribution is not normal but might approach normality with larger sample sizes.
+2. Independent observations. Because the seeds were randomly sampled, independence of observations can be assumed. 
+3. Normally distributed data. The distribution of the sample is approaching normal (with smaller bins) and will approach normality with larger sample sizes due to the Central Limit Theorem. The below Q-Q plot indicates limited deviation in the tails.
+
+```{r seednorm}
+qqnorm(seeds$Weight)
+qqline(seeds$Weight)
+```
+
 4. Large sample size. The current sample size (n = 25) does not meet this assumption. 
 
 # Part 5
@@ -186,4 +196,4 @@ Increasing the confidence level would _increase_ the width of a confidence inter
 
 ## Part 5C
 
-Increasing standard deviation would not affect the width of a confidence interval; the width would _stay the same_.
+Increasing standard deviation would _increase_ the width of a confidence interval.
