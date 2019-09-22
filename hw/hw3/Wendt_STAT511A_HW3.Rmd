@@ -93,7 +93,7 @@ Because the test statistic (4.29) is greater than the critical value (2.01), I *
 
 Comparing the tests in part D (n = 10) vs part F (n = 51), which has higher power? No need to justify.
 
-Part F (n = 51). As sample size increases, power increases.
+Part F (n = 51) has higher power. As sample size increases, power increases.
 
 # Question 2
 
@@ -130,7 +130,7 @@ qqline(pills$y)
 shapiro.test(pills$y)
 ```
 
-Based on the above plots (histogram and Q-Q plot) and the Shapiro-Wilk test (p > 0.05), the data appear normally distributed, even considering the smaller sample size (n = 24).
+Based on the above plots (histogram and Q-Q plot) and the Shapiro-Wilk test (p > 0.05), the data appear normally distributed (i.e., symmetrical, bell-shaped, and close to the Q-Q line), even considering the smaller sample size (n = 24).
 
 ## Part 2B
 
