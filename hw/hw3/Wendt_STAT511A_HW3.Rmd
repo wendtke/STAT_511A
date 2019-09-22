@@ -1,0 +1,203 @@
+---
+title: "STAT 511A HW 3"
+author: "Kathleen Wendt"
+date: "9/20/2019"
+output: pdf_document
+---
+
+# Question 1
+
+Suppose the mean oxygen level of a certain lake was of interest. A total of n=10 samples were taken (from randomly selected locations) and oxygen level was measured in ppm. The sample mean oxygen level was found to be 5.3 and the sample standard deviation was found to be 0.5. Use alpha = 0.05.
+
+## Part 1A
+
+Calculate the SE (standard error) and the 95% ME (margin of error).
+
+The standard error of the mean can be found by dividing the sample standard deviation (s) by the square root of the sample size (n); therefore, the present standard error of the mean of the oxygen level in the lake is $s/\sqrt(n) = 0.5/\sqrt(10)$ = `r 0.5/(sqrt(10))`. 
+
+The 95% margin of error is constructed with the table value (`r qt(0.975, df = 9)`), degrees of freedom (n -1 = 10 - 1 = 9), and the standard error (`r 0.5/(sqrt(10))`). Thus, the margin of error is `r qt(0.975, df = 9)` * `r 0.5/(sqrt(10))`, which is `r 2.26*0.158`.
+
+## Part 1B
+
+Use your ME from above to construct a 95% confidence interval for mu (population mean).
+
+5.3 $\pm$ `r 2.26*0.158` = (`r 5.3 - 2.26*0.158`, `r 5.3 + 2.26*0.158`)
+
+## Part 1C
+
+Use your CI from above to test H0: $\mu$ = 5 vs HA: $\mu$ =! 5. Make a conclusion about the test. Justify your conclusion based on the CI.
+
+Because the null value ($\mu$ = 5) is within the 95% confidence interval, I fail to reject the null hypothesis that the level of oxygen in the lake is 5 ppm. 
+
+## Part 1D
+
+Now test H0 = 5 vs HA =! 5 using a formal hypothesis test. Be sure to define the rejection region, calculate the test statistic and state your conclusion. (4 pts)
+
+### 1. Hypotheses
+The null hypothesis is $\mu$ equals 5; the alternative hypothesis is $\mu$ does not equal 5.
+
+### 2. Test Statistic (TS)
+t = $\bar{y}$ - $\mu$ / ($s/\sqrt(n)$) = $5.3 - 5 / (0.5 - \sqrt(10)$ = `r 0.3/0.158`.
+
+### 3. Rejection Region (RR)
+I checked critical value of t distribution when n = 10, df = 9, and $\alpha$ = 0.05 and ran the below code to double-check.
+
+```{r rejreg1c3}
+qt(0.975, df = 9)
+```
+
+### 4. Conclusion
+Because the test statistic (1.89) is less than the critical value (2.26), I **fail to reject** the null hypothesis that the oxygen level in the lake is 5 ppm. I cannot conclude that $\mu$ is different from 5 ppm.
+
+## Part 1E
+
+Now test H0: less than or equal to 5 vs HA: greater than 5 using a formal hypothesis test. Be sure to define the rejection region, calculate the test statistic and state your conclusion. (4 pts)
+
+### 1. Hypotheses
+The null hypothesis is $\mu$ is less than or equal to 5; the alternative hypothesis is that $\mu$ is greater than 5.
+
+### 2. Test Statistic (TS)
+t = $\bar{y}$ - $\mu$ / ($s/\sqrt(n)$) = $5.3 - 5 / (0.5 - \sqrt(10)$ = `r 0.3/0.158`.
+
+### 3. Rejection Region (RR)
+I checked critical value of t distribution when n = 10, df = 9, and $\alpha$ = 0.05 for one-tailed test and ran the below code to double-check.
+
+```{r rejreg1e3}
+qt(p = 0.05, df = 9, lower.tail = FALSE)
+```
+
+### 4. Conclusion 
+Because the test statistic (1.89) is greater than the one-sided critical value (1.83), I **reject** the null hypothesis that the oxygen level in the lake is less than or equal to 5 ppm. There is evidence to suggest that the $\mu$ oxygen level in the lake is greater than 5 ppm.
+
+## Part 1F
+
+Now suppose that the summary statistics were based on a sample of size n=51. Rerun the hypothesis test from part D (H0: 5 vs HA: not 5) based on this larger sample size. Be sure to define the rejection region, calculate the test statistic, and state your conclusion. (4 pts)
+
+### 1. Hypotheses
+The null hypothesis is $\mu$ equals 5; the alternative hypothesis is $\mu$ does not equal 5.
+
+### 2. Test Statistic (TS)
+t = $\bar{y}$ - $\mu$ / ($s/\sqrt(n)$) = $5.3 - 5 / (0.5 - \sqrt(51)$ = `r 0.3/0.070`.
+
+### 3. Rejection Region (RR)
+I checked critical value of t distribution when n = 51, df = 9, and $\alpha$ = 0.05 and ran the below code to double-check.
+
+```{r rejreg1f3}
+qt(0.975, df = 50)
+```
+
+### 4. Conclusion
+Because the test statistic (4.29) is greater than the critical value (2.01), I **reject** the null hypothesis that the oxygen level in the lake is 5 ppm. There is evidence to suggest that $\mu$ oxygen level in the lake is not 5 ppm.
+
+## Part 1G
+
+Comparing the tests in part D (n = 10) vs part F (n = 51), which has higher power? No need to justify.
+
+Part F (n = 51). As sample size increases, power increases.
+
+# Question 2
+
+Manufacturers must test the amount of the active ingredient in medications before releasing the batch of pills. The data Pills.csv (available from Canvas) represents the amount (in mg) of the active ingredient in n = 24 pills (from a random sample of the same large batch). Use alpha = 0.05.
+
+## Read data
+
+```{r pill_data}
+pills <- readr::read_csv("Pills.csv")
+```
+
+
+## Part 2A
+
+Create a histogram and qqplot and test for normality of the data (using Shapiro-Wilk test). Based on this evidence, does the data appear to be normally distributed? Justify your response. Be sure to include the plots in your assignment. (4 pts)
+
+### Histogram
+
+```{r pills_hist}
+hist(pills$y, breaks = 10)
+```
+
+### Q-Q Plot
+
+```{r pills_qq}
+qqnorm(pills$y)
+qqline(pills$y)
+```
+
+
+## Shapiro-Wilk test for normality
+
+```{r pills_shapiro}
+shapiro.test(pills$y)
+```
+
+Based on the above plots (histogram and Q-Q plot) and the Shapiro-Wilk test (p > 0.05), the data appear normally distributed, even considering the smaller sample size (n = 24).
+
+## Part 2B
+
+Give an estimate of the mean and corresponding 95% confidence interval.
+
+### Estimate of the mean
+
+```{r pills_mean}
+mean(pills$y)
+```
+Because the data are normally distributed, the sample mean $\bar{y}$ can be used to estimate $\mu$. In this case, $\bar{y}$ = `r mean(pills$y)`. 
+
+### 95% confidence interval
+
+```{r pills_ci}
+pills_ci <- broom::tidy(t.test(pills$y, conf.level = 0.95))
+pills_ci
+```
+The mean estimate is also listed in the above t-test: `r pills_ci$estimate`. The 95% confidence interval is `r pills_ci$conf.low` to `r pills_ci$conf.high`.
+
+## Part 2C
+
+For this question, suppose that if there is evidence that the mean is different from 20mg, the batch of pills will be destroyed. Is there evidence that the batch of pills has a mean amount different from 20mg? State your hypotheses, test statistic, p-value and make a conclusion. (4 pts)
+
+### 1. Hypotheses
+The null hypothesis is $\mu$ is 20 mg. The alternative hypothesis is $\mu$ is not 20 mg.
+
+### 2. Test Statistic (TS)
+t = $\bar{y}$ - $\mu$ / ($s/\sqrt(n)$) = $19.5 - 20 / (1.00 - \sqrt(24)$ = `r -0.5/0.2041241`.
+
+```{r pills_test20}
+pills_difftest <- broom::tidy(t.test(pills$y, conf.level = 0.95, mu = 20))
+pills_difftest
+```
+
+OR `r pills_difftest$statistic` (see above).
+
+### 3. Rejection Region (RR)
+I checked critical value of t distribution when n = 24, df = 23, and $\alpha$ = 0.05 and ran the below code to double-check.
+
+```{r rejreg2c3}
+qt(0.975, df = 23)
+```
+
+### 4. Conclusion
+Because the absolute value of the test statistic (|-2.45| = 2.45) is greater than the critical value (2.07) (p = `r pills_difftest$p.value`), I **reject** the null hypothesis that the level of active ingredient is 20 mg. There is evidence to suggest that $\mu$ active ingredient is not 20 mg, thus the batch of pills will be destroyed.
+
+## Part 2D
+
+For this question, suppose that if there is evidence that the mean is less than 20mg, the batch of pills will be destroyed. Is there evidence that the batch of pills has a mean amount less than 20mg? State your hypotheses, test statistic, p-value and make a conclusion. (4 pts)
+
+### 1. Hypotheses
+The null hypothesis is that $\mu$ is less than 20 mg. The alternative hypothesis is that $\mu$ is greater than 20 mg.
+
+### 2. Test Statistic (TS)
+
+```{r lesstest}
+pills_lesstest <- broom::tidy(t.test(pills$y, conf.level = 0.95, mu = 20, alternative = "greater"))
+pills_lesstest
+```
+
+### 3. Rejection Region (RR)
+I checked critical value of t distribution when n = 24, df = 23, and $\alpha$ = 0.05 and ran the below code to double-check.
+
+```{r rejreg2d3}
+qt(p = 0.05, df = 23, lower.tail = FALSE)
+```
+
+### 4. Conclusion
+Because the absolute value of the test statistic (`r pills_lesstest$statistic`) is greater than the critical value (1.71) (_p_ = `r pills_lesstest$p.value`), I **fail to reject** the null hypothesis that the level of active ingredient is less than 20 mg. There is not enough evidence to suggest that $\mu$ active ingredient is greater than 20 mg, thus the batch of pills will be destroyed.
