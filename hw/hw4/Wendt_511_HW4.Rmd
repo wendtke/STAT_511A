@@ -1,0 +1,6 @@
+---
+title: "STAT 511A HW4"
+author: "Kathleen Wendt"
+date: "9/25/2019"
+output: pdf_document
+---
