@@ -1,7 +1,7 @@
 ---
 title: "STAT 511A HW4"
 author: "Kathleen Wendt"
-date: "9/25/2019"
+date: "9/27/2019"
 output: pdf_document
 ---
 
@@ -22,15 +22,17 @@ $\hat\sigma$ = (max - min) / 6 = (3200 - 1600) / 6 = `r (3200-1600)/6`
 Using the standard deviation from above, find the (minimum) sample size required to achieve a 95% ME < $80.
 
 ```{r nme1b}
-n <- seq(from = 41, to = 50, by = 1)
+rent_n <- seq(from = 41, to = 50, by = 1)
 sd <- 267.67
 alpha <- 0.05
-me <- qt(1-(alpha/2), df = n-1)*sd/sqrt(n)
-nme1b <- data.frame(n, me)
+me <- qt(1-(alpha/2), df = rent_n-1)*sd/sqrt(rent_n)
+nme1b <- data.frame(rent_n, me)
 nme1b
 ```
 
 A sample size of at least **46 renters** would allow for the construction of a 95% confidence interval with a margin of error less than 80 USD.
+
+\pagebreak
 
 # Question 2
 
@@ -82,6 +84,8 @@ power.t.test(power = 0.8, sd = 2, delta = 0.4,
 
 A sample size of **156 men** would be needed to achieve power of 0.80.
 
+\pagebreak
+
 # Question 3
 
 Use the data from Problem 5.27 which deals with lead concentrations in estuarine creeks.
@@ -94,8 +98,6 @@ tibble::glimpse(creek_lead)
 ## Part 3A
 
 Construct a histogram, qqplot and run SW test of normality. What do you conclude about the normality of the data based on each of the criteria? Do the various plots and tests agree? (4 pts)
-
-\pagebreak
 
 ### Histogram
 
@@ -146,18 +148,153 @@ The median of the lead levels is `r median(creek_lead$Lead)`.
 
 Use the sign test to test the null hypothesis that the median is equal to 30. Give the p-value and make a conclusion.
 
+```{r sign3c}
+# install.packages("BSDA")
+BSDA::SIGN.test(x = creek_lead$Lead, md = 30)
+```
+
+The null hypothesis is that median (M) of lead levels in the breaks is 30. The alternative hypothesis is that the true M is not 30. I fail to reject the null hypothesis that the true median lead level is 30, _p_ = 0.6177.
+
 ## Part 3D
 
-Give a 95% confidence interval for the median. Note: For consistency, please report the “Upper Achieved
+Give a 95% confidence interval for the median. Note: For consistency, please report the “Upper Achieved CI". 
+
+(17, 41)
 
 ## Part 3E
 
 Give a (standard) 95% confidence interval for the mean.
 
+```{r ttest3e}
+creek_mean_ttest <- broom::tidy(t.test(creek_lead$Lead))
+tibble::glimpse(creek_mean_ttest)
+```
+
+The 95% confidence interval for $\mu$ lead level is `r creek_mean_ttest$conf.low` to `r creek_mean_ttest$conf.high`.
+
 ## Part 3F
 
 It should be clear from the diagnostics in part A that the assumption of normality is not met. Hence the CI from previous question is suspect. Give a 95% bootstrap studentized confidence interval for the mean. Hint: See “Boot Example2”, but use a different value for set.seed.
 
+```{r bootstrap3f}
+creek_n <- length(creek_lead$Lead) # set n
+set.seed(20190926) # set seed with today's date
+resamples <- lapply(1:10000, function(i) # create df with 10000 draws
+sample(creek_lead$Lead, size = creek_n, replace = TRUE)) # sample into df
+dim(resamples) # check dimension of df
+length(resamples) # check if 10000 samples were drawn
+```
+
+```{r resortboot}
+sort(resamples[[1]])
+```
+
+```{r array}
+resamples <- simplify2array(resamples)
+dim(resamples)
+```
+
+```{r tstar}
+colmeans <- apply(resamples, 2, mean)
+colsd <- apply(resamples, 2, sd)
+tstar <- (colmeans - mean(creek_lead$Lead))/(colsd/sqrt(creek_n))
+hist(tstar)
+```
+
+```{r boot_ci}
+t025 <- quantile(tstar, prob = 0.975)
+t975 <- quantile(tstar, prob = 0.025)
+t025
+t975
+```
+
+```{r build_ci}
+LB <- mean(creek_lead$Lead) - t025*sd(creek_lead$Lead)/sqrt(creek_n)
+UB <- mean(creek_lead$Lead) - t975*sd(creek_lead$Lead)/sqrt(creek_n)
+CI <- c(LB,UB); names(CI)<-c(); CI
+```
+
 ## Part 3G
 
 Assuming that cumulative lead exposure is of interest, would the mean or the median be of more interest?
+
+**Mean**
+
+\pagebreak
+
+# Question 4
+
+Use the data from problem 6.6 which concerns dissolved oxygen readings for Above and Below town sites. 
+
+Note: The values for the Below site do not match what is shown in the textbook.
+
+Note: The data is in “wide” format. All questions can be answered using the current format. An alternative is to “transpose” the data to “long format”. This is NOT required, but may be handy. For example:
+
+<!-- ```{r example} -->
+<!-- library(tidyverse) -->
+<!-- OxygenTr <- Oxygen %>% -->
+<!-- gather(key = "Site", value = "y") -->
+<!-- str(OxygenTr) -->
+<!-- ``` -->
+
+```{r oxygen_data}
+library(magrittr)
+oxygen_data <- readxl::read_xlsx("ex6-6.xlsx") %>% 
+  tidyr::gather(key = town, value = oxygen)
+tibble::glimpse(oxygen_data)
+```
+
+## Part 4A
+
+Construct the side-by-side boxplots and include them in your assignment.
+
+```{r oxygen_boxplot, message=FALSE}
+library(tidyverse)
+library(ggplot2)
+oxygen_data %>% 
+  ggplot(aes(x = town, y = oxygen)) +
+  geom_boxplot()
+```
+
+## Part 4B
+
+Give the sample means and standard deviations for each site (Above and Below).
+
+```{r oxygen_sumstats}
+oxygen_data %>%
+  group_by(town) %>% 
+  summarize(n = n(),
+            mean = mean(oxygen),
+            sd = sd(oxygen),
+            se = sd/sqrt(n)) %>% 
+  ungroup()
+```
+
+## Part 4C
+
+Considering the summary statistics from above, is the pooled variance t-test or Welch-Satterthwaite t-test preferred here? Justify your response using the rule of thumb from the notes.
+
+Using the rule of thumb (max sd / min sd < 2 to assume equal variances), I estimate the value to be `r 0.3202677/0.1567528`, which is slightly above 2, indicating that equal variances cannot be assumed and a Welch-Satterthwaite t-test is preferred.
+
+## Part 4D
+
+_Without assuming equal variances_, give the 95% confidence interval for the difference between the means. Based on this interval, can we conclude that there is a difference between the population means? Explain.
+
+```{r welch_oxy}
+oxygen_welch <- broom::tidy(t.test(oxygen ~ town, 
+                                   data = oxygen_data, 
+                                   var.equal = FALSE))
+oxygen_welch
+```
+
+The 95% confidence interval for the difference between the mean levels of oxygen by town is (`r oxygen_welch$conf.low`, `r oxygen_welch$conf.high`. Based on this interval, we can conclude that there is no statistically significant difference between means because 0 is included in the interval. 
+
+## Part 4E
+
+Run the Welch-Satterthwaite t-test to test the null hypothesis ($\mu$ 1 - $\mu$ 2 = 0) versus a two-sided alternative. Give the p-value and conclusion.
+
+```{r welch}
+oxygen_welch
+```
+
+We fail to reject the null hypothesis that there is no difference between the mean oxygen levels in Above and Below, _p_ = `r oxygen_welch$p.value`. These results suggest that there is no statistically significant difference between towns in oxygen levels.
