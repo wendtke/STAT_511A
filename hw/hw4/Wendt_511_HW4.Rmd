@@ -4,3 +4,160 @@ author: "Kathleen Wendt"
 date: "9/25/2019"
 output: pdf_document
 ---
+
+# Question 1
+
+The housing department in a large city wants to estimate the average rent for rent-controlled apartments in the city. They need to determine the number of renters to include in a survey in order to estimate the average rent to within 80 USD using a 95% confidence interval. From past surveys, the monthly charge for rent-controlled apartments ranged from 1600-3200 USD.
+
+## Part 1A
+
+Suppose that based on the previous survey, almost all (>99%) apartment rents fell within 1600-3200 USD. Use this information to “estimate” the standard deviation.
+
+I used the **Empirical Rule** (99%) to estimate the standard deviation:
+
+$\hat\sigma$ = (max - min) / 6 = (3200 - 1600) / 6 = `r (3200-1600)/6`
+
+## Part 1B
+
+Using the standard deviation from above, find the (minimum) sample size required to achieve a 95% ME < $80.
+
+```{r nme1b}
+n <- seq(from = 41, to = 50, by = 1)
+sd <- 267.67
+alpha <- 0.05
+me <- qt(1-(alpha/2), df = n-1)*sd/sqrt(n)
+nme1b <- data.frame(n, me)
+nme1b
+```
+
+A sample size of at least **46 renters** would allow for the construction of a 95% confidence interval with a margin of error less than 80 USD.
+
+# Question 2
+
+A national agency sets recommended daily allowances for many supplements. In particular, the allowance for zinc for adult men is 15 mg/day. The agency would like to determine if the average intake of zinc for adult men is _greater than_ 15 mg/day. Suppose from a previous study they estimate the standard deviation to be 2 mg/day and they conjecture that the true population mean is 15.4 mg/day. The investigators plan to use a one-sample t-test with $\alpha$ = 0.05.
+
+## Part 2A
+
+Find the power with n = 120 for the scenario above.
+
+```{r power2a}
+power.t.test(n = 120, sd = 2, delta = 0.4,
+             sig.level = 0.05, 
+             type = "one.sample", alternative = "one.sided")
+```
+
+## Part 2B
+
+If the standard deviation was smaller (less than 2) would the power be higher or lower than that calculated in part A?
+
+**Higher**
+
+## Part 2C
+
+If the sample size was larger (more than 120) would the power be higher or lower than that calculated in part A?
+
+**Higher**
+
+## Part 2D
+
+If we used $\alpha$ = 0.01 (instead of 0.05), would the power be higher or lower than that calculated in part A?
+
+**Lower**
+
+## Part 2E
+
+Using a conjectured mean of 16 mg/day (instead of 15.4), would the power be higher or lower than that calculated in part A?
+
+**Higher**
+
+## Part 2F
+
+Return to the original scenario and find the sample size required to achieve 80% power. Remember to “round” up to an integer value.
+
+```{r power2f}
+power.t.test(power = 0.8, sd = 2, delta = 0.4,
+             sig.level = 0.05, 
+             type = "one.sample", alternative = "one.sided")
+```
+
+A sample size of **156 men** would be needed to achieve power of 0.80.
+
+# Question 3
+
+Use the data from Problem 5.27 which deals with lead concentrations in estuarine creeks.
+
+```{r creek_data}
+creek_lead <- readxl::read_xlsx("ex5-27.xlsx")
+tibble::glimpse(creek_lead)
+```
+
+## Part 3A
+
+Construct a histogram, qqplot and run SW test of normality. What do you conclude about the normality of the data based on each of the criteria? Do the various plots and tests agree? (4 pts)
+
+\pagebreak
+
+### Histogram
+
+```{r creek_hist}
+hist(creek_lead$Lead)
+```
+
+The above histogram indicates the lead levels in the estuarine creeks are not normally distributed and are positively skewed.
+
+\pagebreak
+
+### Q-Q Plot
+
+```{r creek_qq}
+qqnorm(creek_lead$Lead)
+qqline(creek_lead$Lead)
+```
+
+The above Q-Q plot shows on-normal patterns consistent with those shown in the histogram. The data are not normal.
+
+### Shapiro-Wilk Test
+
+```{r creek_shapiro}
+shapiro.test(creek_lead$Lead)
+```
+
+Confirmed by the Shapiro-Wilk test, the data on lead levels in esturine creeks are not normal, _p_ < 0.05.
+
+Overall, visual inspection (histogram and Q-Q plot) and the Shapiro-Wilk test indicate the sample data are not normally distributed and are positively skewed.
+
+## Part 3B
+
+Give the sample mean and median for this data.
+
+```{r creek_mean}
+mean(creek_lead$Lead)
+```
+
+The mean of the lead levels is `r mean(creek_lead$Lead)`.
+
+```{r creek_median}
+median(creek_lead$Lead)
+```
+
+The median of the lead levels is `r median(creek_lead$Lead)`.
+
+## Part 3C
+
+Use the sign test to test the null hypothesis that the median is equal to 30. Give the p-value and make a conclusion.
+
+## Part 3D
+
+Give a 95% confidence interval for the median. Note: For consistency, please report the “Upper Achieved
+
+## Part 3E
+
+Give a (standard) 95% confidence interval for the mean.
+
+## Part 3F
+
+It should be clear from the diagnostics in part A that the assumption of normality is not met. Hence the CI from previous question is suspect. Give a 95% bootstrap studentized confidence interval for the mean. Hint: See “Boot Example2”, but use a different value for set.seed.
+
+## Part 3G
+
+Assuming that cumulative lead exposure is of interest, would the mean or the median be of more interest?
