@@ -19,7 +19,7 @@ $\hat\sigma$ = (max - min) / 6 = (3200 - 1600) / 6 = `r (3200-1600)/6`
 
 ## Part 1B
 
-Using the standard deviation from above, find the (minimum) sample size required to achieve a 95% ME < $80.
+Using the standard deviation from above, find the (minimum) sample size required to achieve a 95% ME < 80 USD.
 
 ```{r nme1b}
 rent_n <- seq(from = 41, to = 50, by = 1)
@@ -153,7 +153,7 @@ Use the sign test to test the null hypothesis that the median is equal to 30. Gi
 BSDA::SIGN.test(x = creek_lead$Lead, md = 30)
 ```
 
-The null hypothesis is that median (M) of lead levels in the breaks is 30. The alternative hypothesis is that the true M is not 30. I fail to reject the null hypothesis that the true median lead level is 30, _p_ = 0.6177.
+The null hypothesis is that median (M) of lead levels in the breaks is 30. The alternative hypothesis is that the true M is not 30. Using $\alpha$ = 0.05, I fail to reject the null hypothesis that the true median lead level is 30, _p_ = 0.6177.
 
 ## Part 3D
 
@@ -211,7 +211,9 @@ t975
 ```{r build_ci}
 LB <- mean(creek_lead$Lead) - t025*sd(creek_lead$Lead)/sqrt(creek_n)
 UB <- mean(creek_lead$Lead) - t975*sd(creek_lead$Lead)/sqrt(creek_n)
-CI <- c(LB,UB); names(CI)<-c(); CI
+CI <- c(LB,UB)
+names(CI) <- c()
+CI
 ```
 
 ## Part 3G
@@ -287,7 +289,7 @@ oxygen_welch <- broom::tidy(t.test(oxygen ~ town,
 oxygen_welch
 ```
 
-The 95% confidence interval for the difference between the mean levels of oxygen by town is (`r oxygen_welch$conf.low`, `r oxygen_welch$conf.high`. Based on this interval, we can conclude that there is no statistically significant difference between means because 0 is included in the interval. 
+The 95% confidence interval for the difference between the mean levels of oxygen by town is (`r oxygen_welch$conf.low`, `r oxygen_welch$conf.high`). Based on this interval, we can conclude that there is no statistically significant difference between means because 0 is included in the interval. 
 
 ## Part 4E
 
