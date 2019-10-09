@@ -1,0 +1,186 @@
+---
+title: "STAT 511A Homework 5"
+author: "Kathleen Wendt"
+date: "10/11/2019"
+output: pdf_document
+---
+
+# Question 1
+
+## Rat data
+
+Refer to Problem 6.42 which deals with lung capacity of rats exposed to ozone. Note: For consistency, please calculate the differences as After – Before where needed.
+
+```{r rat_data}
+rat_data <- readxl::read_xlsx("ex6-42.xlsx")
+tibble::glimpse(rat_data)
+```
+
+## Part 1A
+
+Calculate the mean and standard deviation for Before and After (separately).
+
+### Before - Mean and SD
+
+```{r rats_before}
+mean(rat_data$Before)
+sd(rat_data$Before)
+```
+
+### After - Mean and SD
+
+```{r rats_after}
+mean(rat_data$After)
+sd(rat_data$After)
+```
+
+## Part 1B
+
+### Add Differences Column (After - Before)
+
+```{r rat_diff}
+library(magrittr)
+rat_data <- rat_data %>% 
+  dplyr::mutate(diff = After - Before)
+tibble::glimpse(rat_data)
+```
+
+### Q-Q Plot of Differences
+
+Are the differences (After – Before for each rat) normally distributed? Support your answer by including a qqplot of differences in your assignment.
+
+```{r rat_qq}
+qqnorm(rat_data$diff)
+qqline(rat_data$diff)
+```
+The differences for each rat are approximately normally distributed; the quantiles are close (enough) to the line in the Q-Q plot, considering the small sample size.
+
+## Part 1C
+
+Is there sufficient evidence to support the research hypothesis that there is a difference in average lung capacity after ozone exposure? Use the paired t-test with alpha=0.05. Give the hypotheses, test statistic, p-value and conclusion. (4 pts)
+
+### Hypotheses
+
+Null (H0): $\mu1$ - $\mu2$ = 0 (No difference in means for Before and After)
+Alternative (HA): $\mu1$ - $\mu2$ != 0 (Sig difference in means for Before and After)
+
+### Paired Two-Sample T-Test
+
+```{r rat_paired_ttest}
+rat_t <- broom::tidy(t.test(
+  x = rat_data$After, 
+  y = rat_data$Before,
+       paired = TRUE, 
+       alternative = "two.sided"))
+rat_t
+```
+
+### Test Statistic
+
+The test statistic from the above paired two-sample t-test is `r rat_t$statistic`. 
+
+### P-Value
+
+The p-value from the above paired two-sample t-test is `r rat_t$p.value`. 
+
+### Conclusion
+
+We reject the null hypothesis that there is no difference in rats' average lung capacity before and after ozone exposure. There is sufficient evidence to suggest a difference in means, such that the rats' average lung capacity is higher after ozone exposure compared to baseline levels.  
+
+## Part 1D
+
+Rerun the test from the previous question using the Wilcoxon Paired (Signed Rank) test. Give your p-value and conclusion. Use the wilcoxsign_test() function from the coin package with distribution = “exact”.
+
+```{r rat_wilcoxon_paired, message=FALSE}
+rat_nonpara <- coin::wilcoxsign_test(After ~ Before,
+                                     data = rat_data,
+                                     distribution = "exact")
+rat_nonpara
+```
+
+We used the Wilcoxon Paired Sign Rank test to nonparametrically investigate the difference of means in rats' lung capacity before and after ozone exposure. We reject the null hypothesis at the $\alpha$ level of 0.05, _p_ = 0.005.
+
+# Question 2
+
+Refer to problem 7.9 which deals with rebound coefficients of baseballs. The summary statistics are provided here for your convenience: n = 40, mean = 84.798, s = 2.684. The raw data is also available from the Ott & Longnecker companion site as “exp07-9.txt”. 
+
+## Baseball data
+
+```{r baseball_data}
+baseball_data <- readxl::read_xlsx("exp07-9.xlsx")
+tibble::glimpse(baseball_data)
+```
+
+## Summary statistics
+
+```{r baseball_sumstats}
+mean(baseball_data$coefficient)
+sd(baseball_data$coefficient)
+```
+
+## Part 2A
+
+Construct a boxplot of the data and include it in your assignment.
+
+```{r baseball_boxplot}
+boxplot(baseball_data$coefficient)
+```
+
+## Part 2B
+
+Using $\alpha$ = 0.01, test H0: mean greater than or equal to 85 vs HA: mean less than 85. Give the one-sided p-value and conclusion.
+
+```{r baseball_t}
+baseball_ttest <- (broom::tidy(t.test(baseball_data$coefficient,
+                                      mu = 85,
+                                      alternative = "less",
+                                      conf.level = 0.99)))
+baseball_ttest
+```
+
+We fail to reject the null hypothesis that $\mu$ is greater than or equal to 85. There is not sufficient evidence to suggest the $\mu$ of coefficients in baseball is less than 85, _p_ = `r baseball_ttest$p.value` > $\alpha$ = 0.01. 
+
+## Part 2C
+
+Note that Table 7 (chi-square) does not have information for df = 39, so use the qchisq() R function to calculate table values needed for parts C and D.
+
+Construct a 99% CI for baseball coefficient standard deviation by hand. Note: provide a standard “two-sided” CI here.
+
+```{r baseball_ci_chi}
+qchisq(0.995, df = 39)
+qchisq(0.005, df = 39) 
+```
+
+### Construct 99% CI for SD "By Hand"
+
+The 99% confidence interval for the standard deviation is `r sqrt(((40-1)*(2.684^2))/65.476)`, `r sqrt(((40-1)*(2.684^2))/19.996)` (i.e., in-line R code to calculate CI using equation).
+
+
+## Part 2D
+
+Using $\alpha$ = 0.01, (by hand) test H0: sd less than or equal to 2 vs HA: sd greater than 2 (variance of 4). Give your test statistic, rejection rule and conclusion. (4 pts) 
+
+### Hypotheses
+
+H0: $\sigma$ <= 2.
+HA: $\sigma$ > 2. 
+
+### Test Statistic 
+
+The chi-square test statistic for the right one-sided alternative is `r ((40-1)*(2.684^2))/4`.
+
+### Rejection Rule
+
+Reject null if chi square test statistic is **greater than** chi square table value ($\alpha$ = 0.01, df = 40 - 1 = 39).  
+
+```{r baseball_chi_tv}
+qchisq(0.99, df = 39)
+```
+
+### Conclusion
+
+We reject the null hypothesis ($\sigma$ <= 2) because the chi-square test statistic (`r ((40-1)*(2.684^2))/4`) is greater than the right one-sided alternative table value (`r qchisq(0.99, df = 39)`). The corresponding p-value can be determined by: 
+
+```{r baseball_chi_p}
+1-pchisq(70.24, df = 39)
+```
