@@ -9,6 +9,8 @@ output: pdf_document
 
 ```{r packages, message = FALSE}
 library(tidyverse)
+library(broom)
+library(car)
 ```
 
 # Question 1
@@ -23,6 +25,8 @@ rat_data <- readr::read_csv("RatLiver.csv") %>%
 tibble::glimpse(rat_data)
 ```
 
+\pagebreak
+
 ## Part 1A
 
 Construct side-by-side boxplots of the data.
@@ -31,12 +35,6 @@ Construct side-by-side boxplots of the data.
 rat_data %>% 
   ggplot(aes(y = Enzyme, x = Trt)) + 
   geom_boxplot()
-```
-
-```{r rat_hist}
-rat_data %>%
-  ggplot(aes(Enzyme, fill = Trt)) +
-  geom_histogram(bins = 10)
 ```
 
 ## Part 1B
@@ -50,13 +48,13 @@ Equal variances; true ratio of variances is equal to 1.
 ### F-test for equality of variances
 
 ```{r rat_ftest}
-rat_ftest <- broom::tidy(var.test(Enzyme ~ Trt, data = rat_data))
+rat_ftest <- tidy(var.test(Enzyme ~ Trt, data = rat_data))
 rat_ftest
 ```
 
 ### Test statistic
 
-The test statistic for the F-test for equality of variances is `r rat_ftest$statistic`.
+The test statistic (F) for the F-test for equality of variances is `r rat_ftest$statistic`.
 
 ### P-value
 
@@ -73,12 +71,12 @@ Use Levene’s test (with center=”median”) to test for equality of variances
 ### Levene's Test
 
 ```{r rat_levene}
-rat_levene <- broom::tidy(car::leveneTest(Enzyme ~ Trt, data = rat_data,
+rat_levene <- tidy(leveneTest(Enzyme ~ Trt, data = rat_data,
                 center = "median"))
 rat_levene
 ```
 
-### P-Value
+### P-value
 
 The p-value for the Levene Test for equality of variances with median as center is `r rat_levene$p.value`.
 
@@ -102,15 +100,15 @@ $\mu1$ = $\mu2$. No difference between sample means.
 ### Pooled two-sample t-test
 
 ```{r rat_ttest}
-rat_ttest <- broom::tidy(t.test(Enzyme ~ Trt, 
-                                data = rat_data, 
-                                var.equal = TRUE))
+rat_ttest <- tidy(t.test(Enzyme ~ Trt, 
+                         data = rat_data, 
+                         var.equal = TRUE))
 rat_ttest
 ```
 
 ### Test statistic
 
-The test statistic for the pooled two-sample t-test of means is `r rat_ttest$statistic`.
+The test statistic (t) for the pooled two-sample t-test of means is `r rat_ttest$statistic`.
 
 ### P-value
 
@@ -131,7 +129,7 @@ summary(rat_lm)
 ```
 
 ```{r tidy_rat_lm}
-broom::tidy(rat_lm)
+tidy(rat_lm)
 ```
 
 # Question 2
@@ -142,31 +140,107 @@ Read Problem 8.32 which concerns corn yield. The data is available as “CornYie
 
 ```{r corn_data}
 corn_data <- readr::read_csv("CornYield.csv") %>% 
-    mutate(Variety = as.factor(Variety)) 
+  mutate(Variety = as.factor(Variety)) %>%
+  group_by(Variety) %>% 
+  mutate(Mean = mean(Yield),
+         SE = sd(Yield)/sqrt(length(Yield))) %>%
+  ungroup()
+  
 tibble::glimpse(corn_data)
 ```
+
+\pagebreak
 
 ## Part 2A
 
 Construct a bar plot showing means and SEs for each variety. (4 pts)
 
-
+```{r corn_bar}
+corn_data %>%
+  select(Variety, Mean, SE) %>% 
+  ggplot(aes(x = Variety, y = Mean)) + 
+  geom_col(alpha = 0.25, position = "dodge") +
+  geom_errorbar(aes(ymin = Mean - SE, ymax = Mean + SE), 
+                width = 0.2,
+                color = "orange",
+                position = position_dodge()) +
+  ggtitle("Mean (SE) Corn Yield by Type") +
+  theme_bw()
+```
 
 ## Part 2B
 
 Carry out a one-way ANOVA analysis to determine whether there is evidence of differences (using alpha 0.05) in the mean yield for the different varieties. State the null hypothesis, give the test statistic, p-value and conclusion. (4 pts)
 
+### Null hypothesis
+
+$\mu1$ = $\mu2$ = $\mu3$ = $\mu4$. No difference between sample means.
+
+### One-way ANOVA
+
+```{r corn_lm_anova}
+corn_lm <- lm(Yield ~ Variety, data = corn_data)
+anova(corn_lm)
+summary(corn_lm)
+```
+
+```{r tidy_corn_anova}
+corn_anova_tidy <- tidy(anova(corn_lm))
+corn_anova_tidy
+```
+
+### Test statistic
+
+The test statistic (F) for the one-way ANOVA on corn yield by variety is `r corn_anova_tidy$statistic[1]`.
+
+### P-value
+
+The p-value for the one-way ANOVA on corn yield by variety is 0.0000585.
+
+### Conclusion
+
+Reject null hypothesis at $\alpha$ = 0.05. There is evidence to suggest a difference in mean yields across the four varieties of corn.
+
 ## Part 2C
 
 Run (unadjusted) pairwise comparisons of means. Give the estimated difference and p-value for each comparison. (4 pts)
+
+### Pairwise comparisons (`emmeans`)
+
+```{r corn_emmeans}
+library(emmeans)
+corn_em <- emmeans(corn_lm, pairwise ~ Variety, adjust = "none")
+corn_em
+```
+
+### Tidy pairwise comparisons
+
+```{r corn_em_main}
+corn_em_info <- emmeans(corn_lm, ~ Variety)
+corn_em_tidy <- tidy(corn_em_info)
+corn_em_tidy
+```
+
+```{r corn_em_pairs}
+corn_em_pairs <- tidy(pairs(corn_em_info), adjust = "none")
+corn_em_pairs
+```
 
 ## Part 2D
 
 Calculate the LSD(0.05) value. Recall that this is the 95% ME for pairwise comparisons of means.
 
+
+
 ## Part 2E
 
 Construct an (unadjusted) “cld” display including the mean for each variety and assigning number groups (or underlining) varieties that are not “significantly” different. (4 pts)
+
+```{r corn_cld, messages = FALSE}
+# library(multcomp)
+# corn_cld_info <- glht(corn_lm)
+# cld(corn_lm)
+```
 
 ## Part 2F
 
