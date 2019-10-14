@@ -7,11 +7,13 @@ output: pdf_document
 
 # Load packages
 
-```{r packages, message = FALSE}
+```{r packages, message = FALSE, warning = FALSE}
 library(tidyverse)
 library(broom)
 library(car)
+library(emmeans)
 ```
+
 
 # Question 1
 
@@ -78,13 +80,14 @@ rat_levene
 
 ### P-value
 
-The p-value for the Levene Test for equality of variances with median as center is `r rat_levene$p.value`.
+The p-value for the Levene Test for equality of variances with median as center is `r rat_levene$p.value[1]`.
 
 ### Conclusion
 
 Fail to reject null hypothesis. Because the above p-value is above $\alpha$ = 0.05, there is no evidence to suggest that the true ratio of variances is not equal to 1.
 
 ## Part 1D 
+
 Based on your conclusions from the two previous questions, would the pooled variance t-test or Welch-Satterthwaite t-test be preferred?
 
 Pooled t-test
@@ -116,7 +119,7 @@ The p-value for the pooled two-sample t-test of means is `r rat_ttest$p.value`.
 
 ### Conclusion
 
-Reject null hypothesis: `r rat_ttest$p.value` < $\alpha$ = 0.05 level. There is evidence to suggest that there is a difference between sample means, such that the mean level of enzyme in Control rats is higher than those in the Treatment group.
+Reject null hypothesis: `r rat_ttest$p.value` < $\alpha$ = 0.05 level. There is evidence to suggest that there is a difference between sample means, such that the mean level of enzyme in Control rats is higher than that of the Treatment group.
 
 ## Part 1F
 
@@ -125,11 +128,6 @@ Rerun the analysis as a one-way ANOVA. Give the ANOVA table in your assignment. 
 ```{r rat_lm_anova}
 rat_lm <- lm(Enzyme ~ Trt, data = rat_data)
 anova(rat_lm)
-summary(rat_lm)
-```
-
-```{r tidy_rat_lm}
-tidy(rat_lm)
 ```
 
 # Question 2
@@ -157,9 +155,9 @@ Construct a bar plot showing means and SEs for each variety. (4 pts)
 
 ```{r corn_bar}
 corn_data %>%
-  select(Variety, Mean, SE) %>% 
+  dplyr::select(-Yield) %>% 
   ggplot(aes(x = Variety, y = Mean)) + 
-  geom_col(alpha = 0.25, position = "dodge") +
+  geom_col(alpha = 0.15, position = "dodge", width = 0.5) +
   geom_errorbar(aes(ymin = Mean - SE, ymax = Mean + SE), 
                 width = 0.2,
                 color = "orange",
@@ -195,7 +193,7 @@ The test statistic (F) for the one-way ANOVA on corn yield by variety is `r corn
 
 ### P-value
 
-The p-value for the one-way ANOVA on corn yield by variety is 0.0000585.
+The p-value for the one-way ANOVA on corn yield by variety is 0.0000585 `corn_anova_tidy$p.value[1]`.
 
 ### Conclusion
 
@@ -208,7 +206,6 @@ Run (unadjusted) pairwise comparisons of means. Give the estimated difference an
 ### Pairwise comparisons (`emmeans`)
 
 ```{r corn_emmeans}
-library(emmeans)
 corn_em <- emmeans(corn_lm, pairwise ~ Variety, adjust = "none")
 corn_em
 ```
@@ -222,30 +219,45 @@ corn_em_tidy
 ```
 
 ```{r corn_em_pairs}
-corn_em_pairs <- tidy(pairs(corn_em_info), adjust = "none")
-corn_em_pairs
+corn_em_tidy_pairs <- tidy(pairs(corn_em_info), adjust = "none")
+corn_em_tidy_pairs
 ```
 
 ## Part 2D
 
 Calculate the LSD(0.05) value. Recall that this is the 95% ME for pairwise comparisons of means.
 
-
+\pagebreak
 
 ## Part 2E
 
 Construct an (unadjusted) “cld” display including the mean for each variety and assigning number groups (or underlining) varieties that are not “significantly” different. (4 pts)
 
-```{r corn_cld, messages = FALSE}
-# library(multcomp)
-# corn_cld_info <- glht(corn_lm)
-# cld(corn_lm)
+```{r corn_cld}
+CLD(corn_em$emmeans, adjust = "none")
+```
+
+```{r corn_em_plot}
+plot(corn_em$emmeans, comparisons = TRUE)
 ```
 
 ## Part 2F
 
 Summarize your findings from parts C and E.
 
+Corn D and Corn A are in Group 1. Corn B and Corn C are are in Group 2. There are between-group differences in means (Group 1 vs. Group 2) but not within-group differences in means (Corn D/Corn A; Corn B/Corn C).
+
 ## Part 2G
 
-G. Use the plot() function to generate the diagnostic plots from the model from part B. You do not have to include the graphs in your assignment, but discuss the plots of (1) Residuals vs Fitted values and (2) qqplot of residuals and whether assumptions appear to be satisfied based on each plot. (4 pts)
+Use the plot() function to generate the diagnostic plots from the model from part B. You do not have to include the graphs in your assignment, but discuss the plots of (1) Residuals vs Fitted values and (2) qqplot of residuals and whether assumptions appear to be satisfied based on each plot. (4 pts)
+
+### Check ANOVA assumptions visually
+
+```{r corn_res_plots}
+par(mfrow=c(2,2))
+plot(corn_lm)
+```
+
+(1) Residuals vs Fitted values: This plot checks for violations of constant variance and linearity. Because there is neither a mega-phone or bow pattern of the residuals, there is no evidence for the violation of the assumption of constant variance or linearity, respectively.
+
+(2) Q-Q plot of residuals: This plot checks for normality of residuals. There are slight deviation from the Q-Q line on the upper-end of the plot. This indicates there might be evidence of heavy tail, and, therefore, a potential violation of the assumption of normally distributed residuals.
