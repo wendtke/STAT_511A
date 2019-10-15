@@ -68,7 +68,7 @@ Fail to reject null hypothesis. Because the above p-value is above $\alpha$ = 0.
 
 ## Part 1C 
 
-Use Levene’s test (with center=”median”) to test for equality of variances. Give the p-value and conclusion.
+Use Levene’s test (with center = "median") to test for equality of variances. Give the p-value and conclusion.
 
 ### Levene's Test
 
@@ -178,8 +178,9 @@ $\mu1$ = $\mu2$ = $\mu3$ = $\mu4$. No difference between sample means.
 
 ```{r corn_lm_anova}
 corn_lm <- lm(Yield ~ Variety, data = corn_data)
-anova(corn_lm)
+corn_lm
 summary(corn_lm)
+anova(corn_lm)
 ```
 
 ```{r tidy_corn_anova}
@@ -213,7 +214,7 @@ corn_em
 ### Tidy pairwise comparisons
 
 ```{r corn_em_main}
-corn_em_info <- emmeans(corn_lm, ~ Variety)
+corn_em_info <- emmeans(corn_lm, ~ Variety, adjust = "none")
 corn_em_tidy <- tidy(corn_em_info)
 corn_em_tidy
 ```
@@ -226,6 +227,12 @@ corn_em_tidy_pairs
 ## Part 2D
 
 Calculate the LSD(0.05) value. Recall that this is the 95% ME for pairwise comparisons of means.
+
+ME = LSD = t(alpha/2)*sw(sqrt(s/n))
+
+95% ME for ui - uj
+
+hand calculation -- same rice example
 
 \pagebreak
 
@@ -254,7 +261,7 @@ Use the plot() function to generate the diagnostic plots from the model from par
 ### Check ANOVA assumptions visually
 
 ```{r corn_res_plots}
-par(mfrow=c(2,2))
+par(mfrow = c(2,2))
 plot(corn_lm)
 ```
 
