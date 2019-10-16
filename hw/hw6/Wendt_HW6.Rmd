@@ -14,7 +14,6 @@ library(car)
 library(emmeans)
 ```
 
-
 # Question 1
 
 ## Rat data
@@ -22,9 +21,9 @@ library(emmeans)
 In an investigation of the possible influence of dietary chromium on diabetic symptoms, 14 rats were fed a low-chromium diet and 10 were fed a control diet. One response variable was activity of the liver enzyme GITH. The data is available as “RatLiver.csv”.
 
 ```{r rat_data}
-rat_data <- readr::read_csv("RatLiver.csv") %>% 
+rat_data <- read_csv("RatLiver.csv") %>% 
     mutate(Trt = as.factor(Trt)) 
-tibble::glimpse(rat_data)
+glimpse(rat_data)
 ```
 
 \pagebreak
@@ -90,7 +89,7 @@ Fail to reject null hypothesis. Because the above p-value is above $\alpha$ = 0.
 
 Based on your conclusions from the two previous questions, would the pooled variance t-test or Welch-Satterthwaite t-test be preferred?
 
-Pooled t-test
+Pooled t-test. It is reasonable to assume equal variances.
 
 ## Part 1E
 
@@ -137,14 +136,14 @@ Read Problem 8.32 which concerns corn yield. The data is available as “CornYie
 ## Corn data
 
 ```{r corn_data}
-corn_data <- readr::read_csv("CornYield.csv") %>% 
+corn_data <- read_csv("CornYield.csv") %>% 
   mutate(Variety = as.factor(Variety)) %>%
   group_by(Variety) %>% 
   mutate(Mean = mean(Yield),
          SE = sd(Yield)/sqrt(length(Yield))) %>%
   ungroup()
   
-tibble::glimpse(corn_data)
+glimpse(corn_data)
 ```
 
 \pagebreak
@@ -155,9 +154,9 @@ Construct a bar plot showing means and SEs for each variety. (4 pts)
 
 ```{r corn_bar}
 corn_data %>%
-  dplyr::select(-Yield) %>% 
+  select(-Yield) %>% 
   ggplot(aes(x = Variety, y = Mean)) + 
-  geom_col(alpha = 0.15, position = "dodge", width = 0.5) +
+  geom_col(alpha = 0.15, position = position_dodge(), width = 0.5) +
   geom_errorbar(aes(ymin = Mean - SE, ymax = Mean + SE), 
                 width = 0.2,
                 color = "orange",
@@ -178,7 +177,6 @@ $\mu1$ = $\mu2$ = $\mu3$ = $\mu4$. No difference between sample means.
 
 ```{r corn_lm_anova}
 corn_lm <- lm(Yield ~ Variety, data = corn_data)
-corn_lm
 summary(corn_lm)
 anova(corn_lm)
 ```
@@ -194,7 +192,7 @@ The test statistic (F) for the one-way ANOVA on corn yield by variety is `r corn
 
 ### P-value
 
-The p-value for the one-way ANOVA on corn yield by variety is 0.0000585 `corn_anova_tidy$p.value[1]`.
+The p-value for the one-way ANOVA on corn yield by variety is 0.0000585.
 
 ### Conclusion
 
@@ -228,13 +226,29 @@ corn_em_tidy_pairs
 
 Calculate the LSD(0.05) value. Recall that this is the 95% ME for pairwise comparisons of means.
 
-ME = LSD = t(alpha/2)*sw(sqrt(s/n))
 
-95% ME for ui - uj
+```{r}
+# check normality of residuals
+qqnorm(corn_lm$residuals)
+qqline(corn_lm$residuals)
 
-hand calculation -- same rice example
+# critical value
+# df = N - group# = 32 - 4 = 28
+cv <- qt(0.975, 28)
+cv
 
-\pagebreak
+# calculate square root of mean square of residuals/error
+mse <- corn_anova_tidy$meansq[2]
+mse
+
+# create number per group (n) object
+# N = 32; 4 groups; 8 per group
+n <- 8
+
+# plug values into LSD formula
+lsd <- cv*((mse*2)/n)
+lsd
+```
 
 ## Part 2E
 
@@ -252,7 +266,7 @@ plot(corn_em$emmeans, comparisons = TRUE)
 
 Summarize your findings from parts C and E.
 
-Corn D and Corn A are in Group 1. Corn B and Corn C are are in Group 2. There are between-group differences in means (Group 1 vs. Group 2) but not within-group differences in means (Corn D/Corn A; Corn B/Corn C).
+Corn D and Corn A are in Group 1. Corn B and Corn C are are in Group 2. There are between-group differences in means (Group 1 vs. Group 2) but not within-group differences in means (Corn D vs. Corn A OR Corn B vs. Corn C).
 
 ## Part 2G
 
