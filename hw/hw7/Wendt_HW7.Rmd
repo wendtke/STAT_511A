@@ -1,0 +1,320 @@
+---
+title: "STAT 511A Homework 7"
+author: "Kathleen Wendt"
+date: "10/25/2019"
+output:
+  pdf_document: default
+---
+
+# Load packages
+
+```{r packages, message = FALSE, warning = FALSE}
+library(readxl)
+library(tidyverse)
+library(broom)
+library(car)
+library(dunn.test)
+library(emmeans)
+```
+
+# Question 1
+
+## Power plant data
+
+Read Problem 8.23 which concerns power plant reliability. This data is available from the Ott & Longnecker companion site. 
+
+Note that the data is in “wide” format. In order to “transpose” the data to “long” format you can use the following code. 
+
+```{r power_data}
+power_data <- read_xlsx("ex8-23.xlsx") %>%
+  gather(key = "plant", value = "edg") %>% 
+  mutate(plant = as_factor(plant)) %>% 
+  drop_na() # remove 135 observations with NA
+glimpse(power_data)
+```
+
+\pagebreak
+
+## Part 1A
+
+Create side-by-side boxplots and include then in your assignment.
+
+```{r power_box}
+power_data %>% 
+  ggplot(aes(y = edg, x = plant)) + 
+  geom_boxplot()
+```
+
+## Part 1B
+
+Run the one-way ANOVA on the original scale. Include the ANOVA table in your assignment.
+
+### Null hypothesis
+
+No difference in mean EDG across plants.
+
+### One-way ANOVA
+
+```{r power_anova}
+power_lm <- lm(edg ~ plant, data = power_data)
+power_anova <- tidy(anova(power_lm))
+power_anova
+```
+
+### Test statistic
+
+The test statistic (F) for the one-way ANOVA is `r power_anova$statistic[1]`.
+
+### P-value
+
+The p-value for the one-way ANOVA is `r power_anova$p.value[1]`.
+
+### Conclusion
+
+Reject null hypothesis at $\alpha$ = 0.05. Difference in mean EDG across power plants.
+
+_Note for parts C and D: plots do NOT need to be included in your assignment, just discuss. However, p-values from Levene’s test and Shapiro-Wilk test should be included in your assignment._
+
+## Part 1C 
+
+Do the assumptions for one-way ANOVA appear to be satisfied for these data? In order to justify your response, consider residual diagnostic plots, Levene’s test (using default center = “median”) and Shapiro-Wilk test results. (4 pts)
+
+### Residual diagnostic plots
+
+```{r power_res_plots}
+par(mfrow = c(2,2))
+plot(power_lm)
+```
+
+(1) Residuals vs Fitted values: This plot checks for violations of constant variance and linearity. Because there is a mega-phone or bow pattern of the residuals, there is evidence for the violation of the assumption of constant variance and linearity.
+
+(2) Q-Q plot of residuals: This plot checks for normality of residuals. There are strong deviations from the Q-Q line on the upper-end of the plot. This indicates evidence of a heavy tail, and, therefore, a potential violation of the assumption of normally distributed residuals.
+
+### Levene's Test
+
+```{r power_levene}
+power_levene <- tidy(leveneTest(edg ~ plant, data = power_data,
+                center = "median"))
+power_levene
+```
+
+The Levene's Test yielded a p-value of `r power_levene$p.value[1]`, which is below $\alpha$ = 0.05, thus indicative of a violation of the assumption of equality of variances.
+
+### Shapiro-Wilk test 
+
+```{r power_shapiro}
+power_shapiro <- tidy(shapiro.test(power_data$edg))
+power_shapiro
+```
+
+The Shapiro-Wilk Test yielded a p-value of `r power_shapiro$p.value`, which is 
+below $\alpha$ = 0.05, thus indicative of non-normality.
+
+## Part 1D 
+
+Because the data are counts of the number of successes for the EDGs, a square root transform may be an alternative to analysis on the original scale. Run the one-way ANOVA after square root transforming EDG. Include the ANOVA table in your assignment.
+
+```{r power_sqrt}
+# square root transformation of EDG
+power_data <- power_data %>% 
+  group_by(plant) %>% 
+  mutate(edg_sq = sqrt(edg)) %>% 
+  ungroup()
+glimpse(power_data)
+```
+
+```{r power_sqrt_anova}
+power_sqrt_lm <- lm(edg_sq ~ plant, data = power_data)
+power_sqrt_anova <- tidy(anova(power_sqrt_lm))
+power_sqrt_anova
+```
+
+## Part 1E
+
+Do the assumptions for one-way ANOVA appear to be satisfied for after square root transform? In order to justify your response, consider residual diagnostic plots, Levene’s test (using default center = “median”) and Shapiro-Wilk test results. (4 pts)
+
+### Residual diagnostic plots (square root transformation)
+
+```{r power_res_plots_sqrt}
+par(mfrow = c(2,2))
+plot(power_sqrt_lm)
+```
+
+(1) Residuals vs Fitted values: This plot checks for violations of constant variance and linearity. The square root transformation of the response variable minimized the previous mega-phone or bow pattern of the residuals, therefore reducing the evidence for the violation of the assumption of constant variance and linearity. The square root transformation helped.
+
+(2) Q-Q plot of residuals: This plot checks for normality of residuals. After the square root transformation of the response variable, there were no longer strong deviations from the Q-Q line on the upper-end of the plot. This indicates limited evidence of a heavy tail; therefore, I am no longer concerned about the potential violation of the assumption of normally distributed residuals. The square root transformation helped.
+
+### Levene's Test (square root transformation)
+
+```{r power_sqrt_levene}
+power_sqrt_levene <- tidy(leveneTest(edg_sq ~ plant, data = power_data,
+                center = "median"))
+power_sqrt_levene
+```
+
+The Levene's Test yielded a p-value of `r power_sqrt_levene$p.value[1]`, which is above $\alpha$ = 0.05, thus indicating that the square root transformation was successful in supporting the assumption of equal variances. 
+
+### Shapiro-Wilk test (square root transformation)
+
+```{r power_sqrt_shapiro}
+power_sqrt_shapiro <- tidy(shapiro.test(power_data$edg_sq))
+power_sqrt_shapiro
+```
+
+After the square root transformation of the response variable, the Shapiro-Wilk Test yielded a p-value of `r power_sqrt_shapiro$p.value`, which is 
+below $\alpha$ = 0.05, thus still indicative of non-normality. In this case, the square root transformation did not aid in normalizing the distribution. The data are still positively skewed.
+
+## Part 1F
+
+Now run the Kruskal-Wallis test on the original scale (not square root transformed). Include the p-value and conclusion in your assignment.
+
+```{r power_kruskal}
+power_kruskal <- tidy(kruskal.test(edg ~ plant, data = power_data))
+power_kruskal
+```
+
+### P-value
+
+The p-value for the Kruskal-Wallis test on the original data is `r power_kruskal$p.value[1]`.
+
+### Conclusion
+
+Fail to reject null hypothesis. No difference in mean EDG across power plants at $\alpha$ = 0.05.
+
+## Part 1G
+
+Use Dunn’s test to run pairwise comparisons after Kruskal-Wallis. Include the pairwise comparisons in your assignment. Which plants show evidence of a difference from plant G at the alpha = 0.05 level? (4pts)
+
+```{r power_dunn}
+dunn.test(x = power_data$edg, g = power_data$plant, method = "none")
+```
+
+There is a difference in EDG between Plant E and Plant G at $\alpha$ = 0.05.
+
+# Question 2
+
+Read Problem 9.13 which concerns a weight loss study. Use the following code to (1) transpose from wide to long and (2) reorder the levels of Trt so that S (standard) is first (for convenience for Dunnett’s comparisons). 
+
+## Weight data
+
+```{r weight_data}
+weight_data <- read_xlsx("ex9-13.xlsx") %>% 
+  gather(key = "trt", value = "loss") %>%
+  mutate(trt = as_factor(trt)) %>%
+  mutate(trt = fct_relevel(trt, "S"))
+glimpse(weight_data)
+levels(weight_data$trt)
+```
+
+## Part 2A
+
+Calculate a table of summary statistics including sample size, mean, sd and se by trt group. (4 pts)
+
+```{r}
+weight_stats <- weight_data %>% 
+  group_by(trt) %>% 
+  summarize(n = n(),
+            mean = mean(loss),
+            sd = sd(loss),
+            se = sd / sqrt(n)) %>% 
+  ungroup()
+
+weight_stats
+```
+
+## Part 2B
+
+Run the one-way ANOVA and include the ANOVA table in your assignment.
+Note: I will not formally ask you to evaluate assumptions for this group of questions but based on the residual diagnostic plots, I think the data looks OK. There does seem to be an outlier for one of the groups.
+
+### Null hypothesis
+
+No difference in mean weight loss across treatment groups.
+
+### One-way ANOVA
+
+```{r weight_anova}
+weight_lm <- lm(loss ~ trt, data = weight_data)
+weight_anova <- tidy(anova(weight_lm))
+weight_anova
+```
+
+### Test statistic
+
+The test statistic (F) for the one-way ANOVA is `r weight_anova$statistic[1]`.
+
+### P-value
+
+The p-value for the one-way ANOVA is `r weight_anova$p.value[1]`.
+
+### Conclusion
+
+Reject null hypothesis at $\alpha$ = 0.05. Difference in mean weight loss across treatment groups.
+
+## Part 2C
+
+Calculate unadjusted p-values for pairwise comparisons of means.
+
+### Pairwise comparisons 
+
+```{r weight_emmeans}
+weight_em <- emmeans(weight_lm, pairwise ~ trt, adjust = "none")
+weight_em
+```
+
+## Part 2D
+
+Calculate Tukey adjusted p-value for pairwise comparisons of means.
+
+```{r weight_emmeans_tukey}
+weight_em_tukey <- emmeans(weight_lm, pairwise ~ trt, adjust = "tukey")
+weight_em_tukey
+```
+
+## Part 2E
+
+Comparing unadjusted and Tukey adjusted results, how many comparisons yield pvalues less than 0.05? Just count the number of p-values less than 0.05.
+
+The Tukey adjustment is more conservative and yielded fewer differences (5 pairs) at $\alpha$ = 0.05. In contrast, there were 8 pairs with p-values lower than $\alpha$ = 0.05 using unadjusted pairwise comparisons.
+
+## Part 2F
+
+Calculate the Tukey HSD 0.05 value (95% Tukey ME). In R, use qtukey(0.95, 5, 45) to find the exact table value.
+
+```{r weight_tukey_hsd}
+# critical value
+# df = N - group# = 32 - 4 = 28
+tukey_tv <- qtukey(0.95, 5, 45)
+
+# calculate square root of mean square of residuals/error
+mse <- weight_anova$meansq[2]
+
+# create number per group (n) object
+# N = 50; 5 groups; 10 per group
+n <- 10
+
+# plug values into LSD formula
+hsd <- tukey_tv*((mse*2)/n)
+hsd
+```
+
+The Tukey HSD 0.05 value is `r hsd`.
+
+## Part 2G
+
+Create a “cld” display with Tukey adjustment.
+
+```{r weight_tukey_cld}
+CLD(weight_em$emmeans, adjust = "tukey")
+```
+
+## Part 2H
+
+Calculate Dunnett adjusted p-values to compare each of the “A” treatments versus “S” (standard). Summarize your conclusions from the Dunnett adjusted pairwise comparisons. Which Trts show evidence of differences as compared to the standard at the alpha = 0.05 level? (4pts)
+
+```{r weight_dunnet}
+weight_dunnett <- emmeans(weight_lm, dunnett ~ trt)
+weight_dunnett$contrasts
+```
+
+Using Dunnett adjustments with $\alpha$ = 0.05, Treatments A1, A2, and A4 yielded different (higher) weight loss estimates, as compared to the Standard treatment.
