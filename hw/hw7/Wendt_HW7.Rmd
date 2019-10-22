@@ -21,15 +21,13 @@ library(emmeans)
 
 ## Power plant data
 
-Read Problem 8.23 which concerns power plant reliability. This data is available from the Ott & Longnecker companion site. 
-
-Note that the data is in “wide” format. In order to “transpose” the data to “long” format you can use the following code. 
+Read Problem 8.23 which concerns power plant reliability. This data is available from the Ott & Longnecker companion site. Note that the data is in “wide” format. 
 
 ```{r power_data}
 power_data <- read_xlsx("ex8-23.xlsx") %>%
   gather(key = "plant", value = "edg") %>% 
   mutate(plant = as_factor(plant)) %>% 
-  drop_na() # remove 135 observations with NA
+  drop_na() # remove 135 observations with NA for EDG
 glimpse(power_data)
 ```
 
@@ -37,7 +35,7 @@ glimpse(power_data)
 
 ## Part 1A
 
-Create side-by-side boxplots and include then in your assignment.
+Create side-by-side boxplots and include them in your assignment.
 
 ```{r power_box}
 power_data %>% 
@@ -49,29 +47,13 @@ power_data %>%
 
 Run the one-way ANOVA on the original scale. Include the ANOVA table in your assignment.
 
-### Null hypothesis
-
-No difference in mean EDG across plants.
-
-### One-way ANOVA
-
 ```{r power_anova}
 power_lm <- lm(edg ~ plant, data = power_data)
 power_anova <- tidy(anova(power_lm))
 power_anova
 ```
 
-### Test statistic
-
-The test statistic (F) for the one-way ANOVA is `r power_anova$statistic[1]`.
-
-### P-value
-
-The p-value for the one-way ANOVA is `r power_anova$p.value[1]`.
-
-### Conclusion
-
-Reject null hypothesis at $\alpha$ = 0.05. Difference in mean EDG across power plants.
+\pagebreak
 
 _Note for parts C and D: plots do NOT need to be included in your assignment, just discuss. However, p-values from Levene’s test and Shapiro-Wilk test should be included in your assignment._
 
@@ -98,7 +80,7 @@ power_levene <- tidy(leveneTest(edg ~ plant, data = power_data,
 power_levene
 ```
 
-The Levene's Test yielded a p-value of `r power_levene$p.value[1]`, which is below $\alpha$ = 0.05, thus indicative of a violation of the assumption of equality of variances.
+The Levene's Test yielded a p-value of 0.03962822, which is below $\alpha$ = 0.05, therefore indicating a violation of the assumption of equal variances.
 
 ### Shapiro-Wilk test 
 
@@ -107,15 +89,14 @@ power_shapiro <- tidy(shapiro.test(power_data$edg))
 power_shapiro
 ```
 
-The Shapiro-Wilk Test yielded a p-value of `r power_shapiro$p.value`, which is 
-below $\alpha$ = 0.05, thus indicative of non-normality.
+The Shapiro-Wilk Test yielded a p-value close to 0, which is 
+below $\alpha$ = 0.05 and indicates non-normality.
 
 ## Part 1D 
 
-Because the data are counts of the number of successes for the EDGs, a square root transform may be an alternative to analysis on the original scale. Run the one-way ANOVA after square root transforming EDG. Include the ANOVA table in your assignment.
+Because the data are counts of the number of successes for the EDGs, a square root transformation may be an alternative to analysis on the original scale. Run the one-way ANOVA after square root transforming EDG. Include the ANOVA table in your assignment.
 
 ```{r power_sqrt}
-# square root transformation of EDG
 power_data <- power_data %>% 
   group_by(plant) %>% 
   mutate(edg_sq = sqrt(edg)) %>% 
@@ -128,6 +109,8 @@ power_sqrt_lm <- lm(edg_sq ~ plant, data = power_data)
 power_sqrt_anova <- tidy(anova(power_sqrt_lm))
 power_sqrt_anova
 ```
+
+\pagebreak
 
 ## Part 1E
 
@@ -152,7 +135,7 @@ power_sqrt_levene <- tidy(leveneTest(edg_sq ~ plant, data = power_data,
 power_sqrt_levene
 ```
 
-The Levene's Test yielded a p-value of `r power_sqrt_levene$p.value[1]`, which is above $\alpha$ = 0.05, thus indicating that the square root transformation was successful in supporting the assumption of equal variances. 
+The Levene's Test yielded a p-value of `r power_sqrt_levene$p.value[1]`, which is above $\alpha$ = 0.05, thus indicating that the square root transformation was successful in adjusting variances to support the reasonable assumption of equal variances. 
 
 ### Shapiro-Wilk test (square root transformation)
 
@@ -161,8 +144,7 @@ power_sqrt_shapiro <- tidy(shapiro.test(power_data$edg_sq))
 power_sqrt_shapiro
 ```
 
-After the square root transformation of the response variable, the Shapiro-Wilk Test yielded a p-value of `r power_sqrt_shapiro$p.value`, which is 
-below $\alpha$ = 0.05, thus still indicative of non-normality. In this case, the square root transformation did not aid in normalizing the distribution. The data are still positively skewed.
+After the square root transformation of the response variable, the Shapiro-Wilk Test yielded a p-value of lower than $\alpha$ = 0.05, thus still indicative of non-normality. In this case, the square root transformation did not aid in normalizing the distribution. The data are still positively skewed.
 
 ## Part 1F
 
@@ -227,10 +209,6 @@ weight_stats
 Run the one-way ANOVA and include the ANOVA table in your assignment.
 Note: I will not formally ask you to evaluate assumptions for this group of questions but based on the residual diagnostic plots, I think the data looks OK. There does seem to be an outlier for one of the groups.
 
-### Null hypothesis
-
-No difference in mean weight loss across treatment groups.
-
 ### One-way ANOVA
 
 ```{r weight_anova}
@@ -238,18 +216,6 @@ weight_lm <- lm(loss ~ trt, data = weight_data)
 weight_anova <- tidy(anova(weight_lm))
 weight_anova
 ```
-
-### Test statistic
-
-The test statistic (F) for the one-way ANOVA is `r weight_anova$statistic[1]`.
-
-### P-value
-
-The p-value for the one-way ANOVA is `r weight_anova$p.value[1]`.
-
-### Conclusion
-
-Reject null hypothesis at $\alpha$ = 0.05. Difference in mean weight loss across treatment groups.
 
 ## Part 2C
 
@@ -264,7 +230,7 @@ weight_em
 
 ## Part 2D
 
-Calculate Tukey adjusted p-value for pairwise comparisons of means.
+Calculate Tukey adjusted p-values for pairwise comparisons of means.
 
 ```{r weight_emmeans_tukey}
 weight_em_tukey <- emmeans(weight_lm, pairwise ~ trt, adjust = "tukey")
@@ -275,16 +241,16 @@ weight_em_tukey
 
 Comparing unadjusted and Tukey adjusted results, how many comparisons yield pvalues less than 0.05? Just count the number of p-values less than 0.05.
 
-The Tukey adjustment is more conservative and yielded fewer differences (5 pairs) at $\alpha$ = 0.05. In contrast, there were 8 pairs with p-values lower than $\alpha$ = 0.05 using unadjusted pairwise comparisons.
+The Tukey adjustment is more conservative and yielded fewer differences in means (5 pairs) at $\alpha$ = 0.05. In contrast, there were 8 pairs with p-values lower than $\alpha$ = 0.05 using unadjusted pairwise comparisons of means.
 
 ## Part 2F
 
 Calculate the Tukey HSD 0.05 value (95% Tukey ME). In R, use qtukey(0.95, 5, 45) to find the exact table value.
 
 ```{r weight_tukey_hsd}
-# critical value
-# df = N - group# = 32 - 4 = 28
-tukey_tv <- qtukey(0.95, 5, 45)
+# Tukey critical value
+# df = N - group# = 50 - 5 = 45
+tukey_cv <- qtukey(0.95, 5, 45)
 
 # calculate square root of mean square of residuals/error
 mse <- weight_anova$meansq[2]
@@ -293,8 +259,8 @@ mse <- weight_anova$meansq[2]
 # N = 50; 5 groups; 10 per group
 n <- 10
 
-# plug values into LSD formula
-hsd <- tukey_tv*((mse*2)/n)
+# plug values into HSD formula
+hsd <- tukey_cv*sqrt(((mse)/n))
 hsd
 ```
 
@@ -317,4 +283,4 @@ weight_dunnett <- emmeans(weight_lm, dunnett ~ trt)
 weight_dunnett$contrasts
 ```
 
-Using Dunnett adjustments with $\alpha$ = 0.05, Treatments A1, A2, and A4 yielded different (higher) weight loss estimates, as compared to the Standard treatment.
+Using Dunnett adjustments with $\alpha$ = 0.05, Treatments A1, A2, and A4 yielded different (higher) average weight loss, as compared to the Standard treatment.
