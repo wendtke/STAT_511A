@@ -68,7 +68,7 @@ par(mfrow = c(2,2))
 plot(power_lm)
 ```
 
-(1) Residuals vs Fitted values: This plot checks for violations of constant variance and linearity. Because there is a mega-phone or bow pattern of the residuals, there is evidence for the violation of the assumption of constant variance and linearity.
+(1) Residuals vs Fitted values: This plot checks for violations of constant variance. Because there is a mega-phone pattern of the residuals, there is evidence for the violation of the assumption of constant variance.
 
 (2) Q-Q plot of residuals: This plot checks for normality of residuals. There are strong deviations from the Q-Q line on the upper-end of the plot. This indicates evidence of a heavy tail, and, therefore, a potential violation of the assumption of normally distributed residuals.
 
@@ -123,7 +123,7 @@ par(mfrow = c(2,2))
 plot(power_sqrt_lm)
 ```
 
-(1) Residuals vs Fitted values: This plot checks for violations of constant variance and linearity. The square root transformation of the response variable minimized the previous mega-phone or bow pattern of the residuals, therefore reducing the evidence for the violation of the assumption of constant variance and linearity. The square root transformation helped.
+(1) Residuals vs Fitted values: This plot checks for violations of constant variance and linearity. The square root transformation of the response variable minimized the previous mega-phone pattern of the residuals, therefore reducing the evidence for non-constant variance. The square root transformation helped.
 
 (2) Q-Q plot of residuals: This plot checks for normality of residuals. After the square root transformation of the response variable, there were no longer strong deviations from the Q-Q line on the upper-end of the plot. This indicates limited evidence of a heavy tail; therefore, I am no longer concerned about the potential violation of the assumption of normally distributed residuals. The square root transformation helped.
 
@@ -161,7 +161,7 @@ The p-value for the Kruskal-Wallis test on the original data is `r power_kruskal
 
 ### Conclusion
 
-Fail to reject null hypothesis. No difference in mean EDG across power plants at $\alpha$ = 0.05.
+We fail to reject the null hypothesis; there is not sufficient evidence to suggest that there is a difference in mean EDG across power plants at $\alpha$ = 0.05.
 
 ## Part 1G
 
