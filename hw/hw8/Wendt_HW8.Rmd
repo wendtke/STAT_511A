@@ -1,0 +1,305 @@
+---
+title: "STAT 511A Homework 8"
+author: "Kathleen Wendt"
+date: "11/01/2019"
+output:
+  pdf_document: default
+---
+
+# Load packages
+
+```{r packages, message = FALSE, warning = FALSE}
+library(readxl)
+library(tidyverse)
+library(emmeans)
+library(broom)
+```
+
+# Question 1
+
+Return to the Problem 9.13 data (from HW7) which concerns a weight loss study. For consistency, perform the same “preprocessing” as we did last time. 
+
+## Weight data
+
+```{r weight_data}
+weight_data <- read_xlsx("ex9-13.xlsx") %>% 
+  gather(key = "trt", value = "loss") %>%
+  mutate(trt = as_factor(trt)) %>%
+  mutate(trt = fct_relevel(trt, "S"))
+glimpse(weight_data)
+levels(weight_data$trt)
+```
+
+Use the following additional information about the Trts (called agents in the book):
+
+S = Standard
+A1 = Drug therapy with exercise and with counseling
+A2 = Drug therapy with exercise but no counseling
+A3 = Drug therapy no exercise but with counseling
+A4 = Drug therapy no exercise and no counseling
+
+Estimate and test the following contrasts. You just need to provide the estimate and p-value for each contrast.
+
+## Linear model 
+
+```{r weight_lm}
+weight_lm <- lm(loss ~ trt, data = weight_data)
+```
+
+## Tukey-adjusted pairwise comparisons
+
+```{r weight_pairs}
+weight_em <- emmeans(weight_lm, "trt")
+weight_em
+```
+
+## Part 1A through 1D
+
+```{r contrast_list}
+weight_list <- contrast(weight_em, list(
+    sVa =c(1, -.25, -.25, -.25, -.25),
+    exerVno =c(0, 0.5, 0.5, -0.5, -0.5),
+    counVno =c(0, 0.5, -0.5, 0.5, -0.5),
+    counVs =c(1, -0.5, 0, -0.5, 0)
+    ))
+weight_list
+```
+
+## Part 1A
+
+Compare the mean for the standard agent versus the average of the means for the four other agents.
+
+```{r}
+weight_list[1]
+```
+
+## Part 1B
+
+Compare the mean for the agents with exercise versus those without exercise. (Ignore the standard.)
+
+```{r weight_pairs_b}
+weight_list[2]
+```
+
+## Part 1C
+
+Compare the mean for the agents with counseling versus those without counseling. (Ignore the standard.)
+
+```{r weight_pairs_c}
+weight_list[3]
+```
+
+## Part 1D
+
+Compare the mean for the agents with counseling versus the standard.
+
+```{r weight_pairs_d}
+weight_list[4]
+```
+
+# Question 2
+
+Suppose Y is a binomial random variable with n = 22 and $\pi$ = 0.7. Compute the following.
+
+## Part 2A
+
+Mean and standard deviation of Y.
+
+$\mu$ of Y = n x $\pi$ = 22 x 0.7 = `r 22*0.7`.
+
+$\sigma$ of Y = sqrt((n x $\pi$) x (1 - $\pi$)) = `r sqrt((22*0.7)*(1-0.7))`. 
+
+## Part 2B
+
+P(Y less than or equal to 15)
+
+```{r binom_2b}
+pbinom(q = 15, size = 22, prob = 0.7)
+```
+
+## Part 2C
+
+P(Y less than 15) = P(Y less than or equal to 14) 
+
+```{r binom_2c}
+pbinom(q = 14, size = 22, prob = 0.7)
+```
+
+## Part 2D
+
+P(Y equal to 15)
+
+```{r binom_2d}
+dbinom(x = 15, size = 22, prob = 0.7)
+```
+
+## Part 2E
+
+P(15 less than or equal to Y less than 18) = 
+
+P(Y greater than or equal to 15) 
+AND 
+P(Y less than 18) = P(Y less or equal to 17)
+
+```{r binom_2e}
+pbinom(q = 17, size = 22, prob = 0.7) - 
+  (1 - pbinom(q = 14, size = 22, prob = 0.7))
+```
+
+## Part 2F
+
+P(Y greater than or equal to 18)
+
+```{r binom_2f}
+1 - pbinom(17, size = 22, prob = 0.7)
+```
+
+## Part 2G
+
+The normal approximation to P(Y greater than or equal to 18) without continuity correction.
+
+$\mu$ of Y = n x $\pi$ = 22 x 0.7 = `r 22*0.7`.
+
+```{r mu_2g}
+mu <- 22*0.7
+```
+
+$\sigma$ of Y = sqrt((n x $\pi$) x (1 - $\pi$)) = `r sqrt((22*0.7)*(1-0.7))`. 
+
+```{r sigma_2g}
+sigma <- sqrt((22*0.7)*(1-0.7))
+```
+
+P(Y less than or equal to 17) = P((Y - mu)/sigma)) less than or equal to ((17-mu)/sigma).
+
+((17-mu)/sigma) = `r (17-mu)/sigma` 
+
+```{r z_2g}
+z <- (17-mu)/sigma
+```
+
+P(Z less than or equal to `r z`) = 0.7704. 
+
+Therefore, P(Y greater than or equal to 18) is approximately 1 - 0.7704 = `r 1 - 0.7704`. 
+
+## Part 2H
+
+The normal approximation to P(Y greater than or equal to 18) with continuity correction.
+
+P(Y less than or equal to 17.5) = P((Y - mu)/sigma)) is less than or equal to ((17.5 - mu)/sigma) = `r ((17.5 - mu)/sigma)`. 
+
+Therefore, P(Z less than or equal to `r ((17.5 - mu)/sigma)`) = 0.8340.
+
+Therefore, P(Y greater than or equal to 18) is approximately 1 = 0.8340 = `r 1 - 0.8340`.
+
+# Question 3
+
+Problem 10.14: Many articles have written about the relationship between chronic pain and age of the patient. A survey of a random cross section of 800 adults who suffer from chronic pain found that 424 of them were above age 50. For this question, (1) use large sample normal approximation and (2) do the calculations “by hand”.
+
+## Part 3A
+
+Give an estimate for the proportion of persons suffering from chronic pain that are over 50 years of age.
+
+$\hat\pi$ = y (events) / n (trials) = 424/800 = `r 424/800`.
+
+## Part 3B
+
+Give a 95% confidence interval on the proportion of persons suffering from chronic pain that are over 50 years of age.
+
+$\hat\pi$ plus/minus Z(alpha/2) x (sqrt($\hat\pi$(1-$\hat\pi$)/n))
+
+```{r ci_3b}
+pi_hat <- 424/800
+n <- 800
+z_crit <- qnorm(0.95)
+se <- sqrt(pi_hat*(1-pi_hat)/n)
+```
+
+The 95% confidence interval for the proportion of persons suffering from chronic pain who are over 50 years of age is (`r pi_hat - (z_crit*se)`, `r pi_hat + (z_crit*se)`). 
+
+## Part 3C
+
+Using the data in the survey, is there substantial evidence (alpha = 0.05) that more than half of persons suffering from chronic pain are over 50 years of age? In other words, test H0: pi less than or equal to 0.50 versus HA: pi greater than 0.50. Give the Z statistic, p-value and conclusion. (4 pts)
+
+### Test Statistic
+
+```{r propz_3c}
+pi_null <- 0.50
+
+z_ts <- (pi_hat-pi_null)/sqrt(pi_null*(1-pi_null)/n)
+z_ts
+```
+
+### P-value
+
+```{r propp_3c}
+p_value <- 1 - pbinom(423, size = 800, prob = 0.50)
+p_value
+```
+
+### Conclusion
+
+Because `r z_ts` is greater than critical z-score of `r z_crit` and `r p_value` is less than $\alpha$ = 0.05, we reject the null hypothesis that the proportion of persons suffering from chronic pain is less than or equal to 0.50. There is evidence to suggest that $\pi$ is greater than 0.50.
+
+# Question 4
+
+A factory manager decided to estimate the proportion of defective items. A random sample of 50 items was inspected and it was found that 4 of them are defective.
+
+```{r assign_4}
+pi_hat_fac = 4/50
+n_fac = 50
+```
+
+## Part 4A
+
+Give an estimate for the proportion of defective items.
+
+$\hat\pi$ = 4/50 = `r pi_hat_fac`.
+
+## Part 4B
+
+Using R, calculate a 90% confidence interval for the true proportion of defective items using the normal approximation. 
+
+_NOTES: (1) Use correct = TRUE (default) and (2) The R CI will not match a hand calculation for this problem because R uses a different formula._
+
+```{r ci_4b}
+factory_ci <- tidy(prop.test(x = 4, 
+                             n = 50,
+                             conf.level = 0.90,
+                             correct = FALSE))
+factory_ci
+```
+
+The 90% CI for $\pi$ of defective items is (`r factory_ci$conf.low`, `r factory_ci$conf.high`).
+
+## Part 4C
+
+Using R, calculate a 90% confidence interval for the true proportion of defective items using the exact binomial method.
+
+```{r ci_exact_4c}
+fact_ci_exact <- tidy(binom.test(x = 4, 
+                                 n = 50, 
+                                 conf.level = 0.90))
+fact_ci_exact
+```
+
+Using the exact binomial method, the 90% CI for $\pi$ of defective items is (`r fact_ci_exact$conf.low`, `r fact_ci_exact$conf.high`).
+
+## Part 4D
+
+Is the sample size large enough for the normal approximation to be valid? Justify your response using the criteria discussed in the notes (CH10 slide 23).
+
+$\hat\pi$ = 4/50 = `r pi_hat_fac`
+
+$\hat\pi$ should be more than 3 SEs away from 0 and 1 to justify the use of the large sample normal approximation.
+
+```{r check_4d}
+n_check <- 3*(sqrt(pi_hat_fac*(1-pi_hat_fac)/n_fac))
+n_check
+```
+
+$\hat\pi$ (`r pi_hat_fac`) is less than `r n_check`, indicating that $\hat\pi$ is less than 3 standard errors from 0. 
+
+$\hat\pi$ (`r pi_hat_fac`) is less than `r 1-n_check`, indicating that $\hat\pi$ is less than 3 standard errors from 1. 
+
+The first condition is not satisfied, thus the large sample normal approximation is not appropriate.
