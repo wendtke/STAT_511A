@@ -46,14 +46,14 @@ Estimate and test the following contrasts. You just need to provide the estimate
 weight_lm <- lm(loss ~ trt, data = weight_data)
 ```
 
-## Tukey-adjusted pairwise comparisons
+## Estimated means
 
 ```{r weight_pairs}
 weight_em <- emmeans(weight_lm, "trt")
 weight_em
 ```
 
-## Part 1A through 1D
+## Part 1A through 1D Preparation
 
 ```{r contrast_list}
 weight_list <- contrast(weight_em, list(
@@ -142,8 +142,7 @@ AND
 P(Y less than 18) = P(Y less or equal to 17)
 
 ```{r binom_2e}
-pbinom(q = 17, size = 22, prob = 0.7) - 
-  (1 - pbinom(q = 14, size = 22, prob = 0.7))
+pbinom(q = 17, size = 22, prob = 0.7) - pbinom(q = 14, size = 22, prob = 0.7)
 ```
 
 ## Part 2F
@@ -157,6 +156,8 @@ P(Y greater than or equal to 18)
 ## Part 2G
 
 The normal approximation to P(Y greater than or equal to 18) without continuity correction.
+
+### Hand calculation
 
 $\mu$ of Y = n x $\pi$ = 22 x 0.7 = `r 22*0.7`.
 
@@ -175,22 +176,52 @@ P(Y less than or equal to 17) = P((Y - mu)/sigma)) less than or equal to ((17-mu
 ((17-mu)/sigma) = `r (17-mu)/sigma` 
 
 ```{r z_2g}
-z <- (17-mu)/sigma
+z_2g <- (17-mu)/sigma
 ```
 
-P(Z less than or equal to `r z`) = 0.7704. 
+P(Z less than or equal to `r z_2g`) = 0.7704. 
 
 Therefore, P(Y greater than or equal to 18) is approximately 1 - 0.7704 = `r 1 - 0.7704`. 
 
+### Using `pnorm()` (exact)
+
+```{r pnorm_2g}
+1 - pnorm(z_2g)
+```
+
 ## Part 2H
+
 
 The normal approximation to P(Y greater than or equal to 18) with continuity correction.
 
+### Hand Calculation
+
+
+```{r recall}
+mu
+sigma
+z_2h <- (17.5 - mu) / sigma
+z_2h
+```
+
+
 P(Y less than or equal to 17.5) = P((Y - mu)/sigma)) is less than or equal to ((17.5 - mu)/sigma) = `r ((17.5 - mu)/sigma)`. 
 
-Therefore, P(Z less than or equal to `r ((17.5 - mu)/sigma)`) = 0.8340.
+Therefore, P(Z less than or equal to `r z_2h`) = 0.8340
 
 Therefore, P(Y greater than or equal to 18) is approximately 1 = 0.8340 = `r 1 - 0.8340`.
+
+### Using `pnorm()` (exact)
+
+```{r pnorm_2h}
+1 - pnorm(z_2h)
+```
+
+which is closer to the exact calculation for P(Y greater than or equal to 18):
+
+```{r exact_2h}
+1 - pbinom(17, size = 22, prob = 0.7)
+```
 
 # Question 3
 
