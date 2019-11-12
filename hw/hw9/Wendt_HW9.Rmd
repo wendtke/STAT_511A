@@ -208,7 +208,7 @@ The Bird group has higher odds of lung cancer.
 
 Give a 95% confidence interval for the odds ratio. Based on this interval, can you conclude that there is a relationship between bird ownership and lung cancer? NOTE: Use method = "wald". (4 pts)
 
-See results in Part 3A. The 95% confidence interval for the odds ratio is 1.61, 3.17. Because 0 is not included in the confidence interval, we can conclude there is evidence to suggest a relationship between bird ownership and lung cancer. 
+See results in Part 3A. The 95% confidence interval for the odds ratio is 1.61, 3.17. We can conclude there is evidence to suggest a relationship between bird ownership and lung cancer. 
 
 ## Part 3C
 
