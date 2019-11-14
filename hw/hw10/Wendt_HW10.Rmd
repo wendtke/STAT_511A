@@ -94,22 +94,36 @@ cmh <- metafor::rma.mh(ai = tb[1, 1,],
                        bi = tb[1, 2,],
                        ci = tb[2, 1,],
                        di = tb[2, 2,])
-cmh$BD
 cmh$BDp
 ```
 
-The Breslow-Day Test for equality of odds ratios of three tuberculosis studies yielded a p-value of `r cmh$BDp`, which is below $\alpha$ = .05. There is evidence to suggest a difference between odds ratios by study. It is not appropriate to combine information across studies.
+The Breslow-Day Test for equality of odds ratios of three tuberculosis studies yielded a p-value < .001. There is evidence to suggest a difference between odds ratios by study; it is not appropriate to combine information across studies.
 
 # Question 2
 
 Problem 10.36 involves bomb hits during WWII. Bomb hits were recorded in n = 576 grids in a map of a region of South London.
 
-# Bomb Hits 0 1 2 3 ge4 Total
-# Grids 229 211 93 35 8 576
+## Create data object
+
+```{r bomb_data}
+# observations
+obs <- c(229, 211, 93, 35, 8)
+y <- seq(from = 0, to = 4, by = 1)
+bombs <- cbind(y, obs)
+bombs
+```
 
 ## Part 2A
 
 Find the sample mean ($\mu$) bomb hits per grid.
+
+```{r bomb_mean}
+# mean
+muhat <- sum(obs*y)/sum(obs)
+muhat
+```
+
+$\hat\mu$ = `r muhat` bomb hits per grid.
 
 ## Part 2B
 
@@ -117,16 +131,91 @@ Use the GOF test to test whether the number of bomb hits per grid follows the
 Poisson distribution. Calculate the GOF test statistic, df, p-value and give a
 conclusion using $\alpha$ = 0.05. (6 pts)
 
+```{r bomb_prob}
+# calculate the corresponding Poisson Probabilities
+prob <- dpois(y, muhat)
+prob
+```
+
+```{r prob_check1}
+length(prob)
+sum(prob)
+```
+
+```{r prob_fix}
+# "fix" the final entry so that the probabilities sum to 1
+prob[5] <- 1 - sum(prob[1:4])
+prob
+```
+
+```{r prob_check2}
+length(prob)
+sum(prob)
+```
+
+```{r gof_exp}
+# calculate expected values and contributions to chi-square test statistic
+exp <- prob*576
+x2 <- (obs-exp)^2/exp
+cbind(y, obs, prob, exp, x2)
+```
+
+```{r gof_chi}
+# run GOF test
+gof_chi <- sum(x2)
+gof_chi
+```
+
+```{r gof_df}
+gof_df <- 5-2
+```
+
+```{r gof_p}
+gof_p <- 1 - pchisq(gof_chi, gof_df)
+gof_p
+```
+
+We fail to reject null hypothesis that data are from a Poisson distribution, _p_ = `r gof_p` > $\alpha$ = 0.05.
+
 # Question 3
 
 The data “PoissonData.csv” gives observations Y (counts or events) for n = 50 (units) generated from the Poisson distribution (using the rpoiss() function).
+
+```{r poisson_data}
+poisson <- readr::read_csv("PoissonData.csv")
+```
 
 ## Part 3A
 
 Calculate the sample mean and sample standard deviation. Also construct a histogram and qqplot of the data and include them in your assignment. (4 pts)
 
-NOTE: Because the data comes from the Poisson distribution, you should find that
-the mean and the sample variance (s^2) are close. However, you should also find from the histogram and qqplot that the data looks approximately normal.
+### Sample mean
+
+```{r poisson_mu}
+
+```
+
+### Sample standard deviation
+
+```{r poisson_sd}
+
+```
+
+### Histogram
+
+```{r}
+hist(poisson$Y)
+```
+
+### Q-Q Plot
+
+```{r}
+qqnorm(poisson$Y)
+qqline(poisson$Y)
+```
+
+
+NOTE: Because the data comes from the Poisson distribution, you should find that the mean and the sample variance (s^2) are close. However, you should also find from the histogram and qqplot that the data looks approximately normal.
 
 ## Part 3B
 
