@@ -20,7 +20,7 @@ Bacillus Calmette-Guerin (BCG) is a vaccine for preventing tuberculosis. For thi
 A note about the BCG vaccine from Wikipedia:
 The most controversial aspect of BCG is the variable efficacy found in different clinical trials that appears to depend on geography. Trials conducted in the UK have consistently shown a protective effect of 60 to 80%, but those conducted elsewhere have shown no protective effect, and efficacy appears to fall the closer one gets to the equator.
 
-## Data tables 
+## Create data tables 
 
 ### Study 1 data
 
@@ -78,6 +78,8 @@ tb3_odds$measure
 
 Use the Breslow-Day test to test for equality of odds ratios across the 3 studies. State your p-value and conclusion. Can we conclude that the odds ratios are equal across the 3 studies? Based on this test, should we combine information across studies? (4 pts)
 
+### Create data array
+
 ```{r tb_array}
 tb <- array(c(619, 2537, 10, 8,
               87892, 87886, 499, 505,
@@ -103,7 +105,7 @@ The Breslow-Day Test for equality of odds ratios of three tuberculosis studies y
 
 Problem 10.36 involves bomb hits during WWII. Bomb hits were recorded in n = 576 grids in a map of a region of South London.
 
-## Create data object
+## Create data list
 
 ```{r bomb_data}
 # observations
@@ -175,7 +177,7 @@ gof_p <- 1 - pchisq(gof_chi, gof_df)
 gof_p
 ```
 
-We fail to reject null hypothesis that data are from a Poisson distribution, _p_ = `r gof_p` > $\alpha$ = 0.05.
+We fail to reject the null hypothesis that data are from a Poisson distribution, _p_ = `r gof_p` > $\alpha$ = 0.05. 
 
 # Question 3
 
@@ -192,39 +194,52 @@ Calculate the sample mean and sample standard deviation. Also construct a histog
 ### Sample mean
 
 ```{r poisson_mu}
-
+mu <- mean(poisson$Y)
+mu
 ```
 
 ### Sample standard deviation
 
-```{r poisson_sd}
-
+```{r poisson_s}
+s <- sqrt(mu)
+s
 ```
 
 ### Histogram
 
-```{r}
+```{r poist_hist}
 hist(poisson$Y)
 ```
 
 ### Q-Q Plot
 
-```{r}
+```{r pois_qq}
 qqnorm(poisson$Y)
 qqline(poisson$Y)
 ```
 
 
-NOTE: Because the data comes from the Poisson distribution, you should find that the mean and the sample variance (s^2) are close. However, you should also find from the histogram and qqplot that the data looks approximately normal.
+NOTE: Because the data comes from the Poisson distribution, you should find that the mean and the sample variance (s^2) are close; however, you should also find from the histogram and qqplot that the data looks approximately normal.
 
 ## Part 3B
 
 Give a standard t-based 95% confidence interval for $\mu$.
 
+```{r pois_tci}
+t <- 2.009
+n <- nrow(poisson)
+(mu + t*(s/(sqrt(n))))/n
+(mu - t*(s/(sqrt(n))))/n
+```
+
 ## Part 3C
 
-Following the example on CH10 Slide 106 (Death by Mule Kick CI), construct a 95%
-confidence interval for µ based on the normal approximation to the Poisson
-distribution. (4 pts) In order to do this, you will start by constructing a CI on the total number of events, then divide by the number of units.
+Following the example on CH10 Slide 106 (Death by Mule Kick CI), construct a 95% confidence interval for µ based on the normal approximation to the Poisson distribution. (4 pts) In order to do this, you will start by constructing a CI on the total number of events, then divide by the number of units.
 
 NOTE: The CIs from parts B and C should be similar.
+
+```{r pois_normci}
+z <- 1.96
+(mu + z*(sqrt(mu)))/n
+(mu - z*(sqrt(mu)))/n
+```
