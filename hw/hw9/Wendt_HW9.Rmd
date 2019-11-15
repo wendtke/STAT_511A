@@ -17,11 +17,6 @@ library(epitools)
 
 This is question 10.21 from Ott & Longnecker 7th Edition. The toxicity of two sludge fertilizer treatments are compared. One hundred tomato plants were randomly assigned to pots containing sludge processed by either the “new” or “old” treatment. The tomatoes harvested from the plants were evaluated to determine if the nickel was at a toxic level. Let $\pi$new be the true population proportion of all plants treated with the “New” treatment that will be toxic and let $\pi$old be the true population proportion of all plants treated with the “Old” treatment that will be toxic. For the tests considered in parts B,C and E below we will test H0: $\pi$new - $\pi$old = 0.
 
-Toxic Non-Toxic Total
-New 5 45 50
-Old 9 41 50
-Total 14 86 100
-
 ```{r toxic_table}
 toxic <- matrix(c(5, 45, 9, 41), nrow = 2, byrow = TRUE)
 colnames(toxic) <- c("toxic", "nontoxic")
@@ -107,7 +102,7 @@ toxic_fisher$p.value
 
 Considering the expected cell counts from part D above, is the Chi-Square Test or Fisher’s Exact Test preferred for this data. Justify your choice.
 
-Fisher's Exact Test is preferred due to small sample size.
+The Chi-Square Test is acceptable because all of the expected cell counts exceed 5.
 
 ## Part 1G
 
@@ -125,11 +120,6 @@ toxic_prop_less$p.value
 # Question 2
 
 This is question 10.69 from Ott and Longnecker 7th Edition. A study was conducted to compare two anesthetic drugs for use in minor surgery using n = 45 men who were similar in age and physical condition. The two drugs were applied on the right and left ankles of each patient, and after a fixed period of time, the doctor recorded whether or not the ankle remained anesthetized.
-
-  Drug B Yes    Drug B No     Total
-Drug A Yes  12       10             22
-Drug A No   9        14             23
-Total       21       24             45
 
 ## Part 2A
 
@@ -177,11 +167,6 @@ The p-value is `r drugs_mcnemar$p.value`.
 A case-control study in Berlin, reported by Kohlmeier, Arminger, Bartolomeycik,
 Bellach, Rehm and Thamm (1992) and by Hand et al. (1994) asked 239 lung cancer
 patients and 429 healthy controls (matched to the cases by age and sex) whether or not they had kept a pet bird during adulthood. The data is summarized below:
-
-Healthy Controls Cancer Patients Total
-No Bird  328      141            469
-Bird     101      98             199
-Total    429      239            668
 
 ```{r bird_matrix}
 bird <- matrix(c(328, 141, 101, 98), nrow = 2, byrow = TRUE)
