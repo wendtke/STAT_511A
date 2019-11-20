@@ -1,0 +1,43 @@
+---
+title: "Pretty Example"
+output: pdf_document
+---
+
+## Introduction
+In this study, rats were randomly assigned to one of two groups.  For the control group n = 10 rats received a standard diet.  For the test group n = 10 rats received a calcium deficient diet.  
+
+For both groups, a 0.15% lead-acetate solution was available to drink.  The amount of solution consumed by each rat was measured.
+
+## Summary Statistics and Graph
+```{r include = FALSE, message = FALSE}
+library(tidyverse)
+library(kableExtra)
+ratlead <- read.csv("C:/hess/STAT511_FA11/RData/CH6_RatLead.csv")
+str(ratlead)
+```
+
+Below we show the simple summary statistics and boxplots.
+```{r echo = FALSE}
+SumStats <- summarise(group_by(ratlead, trt), 
+                      n = n(),
+                      mean = mean(y), 
+                      sd = sd(y),
+                      SE = sd/sqrt(n))
+kable(SumStats, digits = 2)
+```
+
+```{r echo = FALSE, fig.length = 4, fig.height= 3}
+qplot(x = trt, y = y, geom = "boxplot", data = ratlead) +
+  labs(x = "", y = "Lead consumption") +
+  ggtitle("Boxplots of Lead Consumption by Group") 
+```
+
+## Statistical analysis and conclusions
+R software was used for statistical analysis.  The two-sample t-test assuming equal variance was used to compare mean lead consumption for the two groups.  In other words, we test $H_0: \mu_C = \mu_D$.  
+
+```{r include = FALSE}
+out <- t.test(y ~ trt, var.equal = TRUE, data = ratlead)
+```
+
+Based on the resulting test statistic and p-value (t = `r round(out$statistic,3)`, p = `r out$p.value`), we conclude that there is a diffence between mean lead consumption for the two diets.  Rats on the deficient diet consume more of the lead solution.
+

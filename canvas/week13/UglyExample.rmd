@@ -1,0 +1,20 @@
+---
+title: "Ugly Example"
+output: pdf_document
+---
+
+```{r}
+library(tidyverse)
+ratlead <- read.csv("C:/hess/STAT511_FA11/RData/CH6_RatLead.csv")
+str(ratlead)
+ratlead
+SumStats <- summarise(group_by(ratlead, trt), 
+                      n = n(),
+                      mean = mean(y), 
+                      sd = sd(y),
+                      se = sd/sqrt(n))
+SumStats
+boxplot(y ~ trt, data = ratlead)
+t.test(y ~ trt, data = ratlead, var.equal = TRUE)
+```
+
