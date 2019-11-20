@@ -9,8 +9,10 @@ output:
 # Load packages
 
 ```{r packages, message = FALSE, warning = FALSE}
-library(epitools)
+library(broom)
+library(lawstat)
 library(metafor)
+library(readr)
 ```
 
 # Question 1
@@ -19,64 +21,6 @@ Bacillus Calmette-Guerin (BCG) is a vaccine for preventing tuberculosis. For thi
 
 A note about the BCG vaccine from Wikipedia:
 The most controversial aspect of BCG is the variable efficacy found in different clinical trials that appears to depend on geography. Trials conducted in the UK have consistently shown a protective effect of 60 to 80%, but those conducted elsewhere have shown no protective effect, and efficacy appears to fall the closer one gets to the equator.
-
-## Create data tables 
-
-### Study 1 data
-
-```{r tb_study1_table}
-tb_study1 <- matrix(c(619, 10, 2537, 8), nrow = 2, byrow = TRUE)
-colnames(tb_study1) <- c("tbneg", "tbpos")
-rownames(tb_study1) <- c("ctrl", "trt")
-tb_study1
-```
-
-### Study 2 data
-
-```{r tb_study2_table}
-tb_study2 <- matrix(c(87892, 499, 87886, 505), nrow = 2, byrow = TRUE)
-colnames(tb_study2) <- c("tbneg", "tbpos")
-rownames(tb_study2) <- c("ctrl", "trt")
-tb_study2
-```
-
-### Study 3 data
-
-```{r tb_study3_table}
-tb_study3 <- matrix(c(7232, 45, 7470, 29), nrow = 2, byrow = TRUE)
-colnames(tb_study3) <- c("tbneg", "tbpos")
-rownames(tb_study3) <- c("ctrl", "trt")
-tb_study3
-```
-
-## Part 1A
-
-Calculate the odds ratio (corresponding to TBpos for Trt vs Ctrl) for each study separately. (4 pts)
-
-### Study 1 odds ratio
-
-```{r study1_odds}
-tb1_odds <- epitools::oddsratio(tb_study1, method = "wald")
-tb1_odds$measure
-```
-
-### Study 2 odds ratio
-
-```{r study2_odds}
-tb2_odds <- epitools::oddsratio(tb_study2, method = "wald")
-tb2_odds$measure
-```
-
-### Study 3 odds ratio
-
-```{r study3_odds}
-tb3_odds <- epitools::oddsratio(tb_study3, method = "wald")
-tb3_odds$measure
-```
-
-## Part 1B
-
-Use the Breslow-Day test to test for equality of odds ratios across the 3 studies. State your p-value and conclusion. Can we conclude that the odds ratios are equal across the 3 studies? Based on this test, should we combine information across studies? (4 pts)
 
 ### Create data array
 
@@ -88,8 +32,37 @@ tb <- array(c(619, 2537, 10, 8,
             dimnames = list(group = c("ctrl", "trt"),
                             response = c("tbneg", "tbpos"),
                             study = c("1", "2", "3")))
-tb
 ```
+
+## Part 1A
+
+Calculate the odds ratio (corresponding to TBpos for Trt vs Ctrl) for each study separately. (4 pts)
+
+```{r tb_cmh, message = FALSE}
+tb_cmh <- broom::tidy(lawstat::cmh.test(tb))
+```
+
+### Study 1 odds ratio
+
+```{r tb1_odds}
+tb_cmh$`Odd Ratio of level 1`
+```
+
+### Study 2 odds ratio
+
+```{r tb2_odds}
+tb_cmh$`Odd Ratio of level 2`
+```
+
+### Study 3 odds ratio
+
+```{r tb3_odds}
+tb_cmh$`Odd Ratio of level 3`
+```
+
+## Part 1B
+
+Use the Breslow-Day test to test for equality of odds ratios across the 3 studies. State your p-value and conclusion. Can we conclude that the odds ratios are equal across the 3 studies? Based on this test, should we combine information across studies? (4 pts)
 
 ```{r tb_bd_test}
 cmh <- metafor::rma.mh(ai = tb[1, 1,],
@@ -112,12 +85,11 @@ Problem 10.36 involves bomb hits during WWII. Bomb hits were recorded in n = 576
 obs <- c(229, 211, 93, 35, 8)
 y <- seq(from = 0, to = 4, by = 1)
 bombs <- cbind(y, obs)
-bombs
 ```
 
 ## Part 2A
 
-Find the sample mean ($\mu$) bomb hits per grid.
+Find the sample mean ($\hat\mu$) bomb hits per grid.
 
 ```{r bomb_mean}
 # mean
@@ -134,7 +106,7 @@ Poisson distribution. Calculate the GOF test statistic, df, p-value and give a
 conclusion using $\alpha$ = 0.05. (6 pts)
 
 ```{r bomb_prob}
-# calculate the corresponding Poisson Probabilities
+# calculate the corresponding Poisson probabilities
 prob <- dpois(y, muhat)
 prob
 ```
@@ -177,11 +149,11 @@ gof_p <- 1 - pchisq(gof_chi, gof_df)
 gof_p
 ```
 
-We fail to reject the null hypothesis that data are from a Poisson distribution, _p_ = `r gof_p` > $\alpha$ = 0.05. 
+We fail to reject the null hypothesis that data are from a Poisson distribution, _p_ = `r gof_p` > $\alpha$ = 0.05.
 
 # Question 3
 
-The data “PoissonData.csv” gives observations Y (counts or events) for n = 50 (units) generated from the Poisson distribution (using the rpoiss() function).
+The data “PoissonData.csv” gives observations Y (counts or events) for n = 50 (units) generated from the Poisson distribution, using the `rpoiss()` function.
 
 ```{r poisson_data}
 poisson <- readr::read_csv("PoissonData.csv")
@@ -207,17 +179,16 @@ s
 
 ### Histogram
 
-```{r poist_hist}
+```{r pois_hist, echo = FALSE}
 hist(poisson$Y)
 ```
 
 ### Q-Q Plot
 
-```{r pois_qq}
+```{r pois_qq, echo = FALSE}
 qqnorm(poisson$Y)
 qqline(poisson$Y)
 ```
-
 
 NOTE: Because the data comes from the Poisson distribution, you should find that the mean and the sample variance (s^2) are close; however, you should also find from the histogram and qqplot that the data looks approximately normal.
 
@@ -228,9 +199,11 @@ Give a standard t-based 95% confidence interval for $\mu$.
 ```{r pois_tci}
 t <- 2.009
 n <- nrow(poisson)
-(mu + t*(s/(sqrt(n))))/n
-(mu - t*(s/(sqrt(n))))/n
+t_ci_ub <- mu + t*(s/(sqrt(n)))
+t_ci_lb <- mu - t*(s/(sqrt(n)))
 ```
+
+(`r t_ci_lb`, `r t_ci_ub`)
 
 ## Part 3C
 
@@ -240,6 +213,9 @@ NOTE: The CIs from parts B and C should be similar.
 
 ```{r pois_normci}
 z <- 1.96
-(mu + z*(sqrt(mu)))/n
-(mu - z*(sqrt(mu)))/n
+y <- sum(poisson$Y)
+z_ci_ub <- (y + z*(sqrt(y)))/50
+z_ci_lb <- (y - z*(sqrt(y)))/50
 ```
+
+(`r z_ci_lb`, `r z_ci_ub`)
