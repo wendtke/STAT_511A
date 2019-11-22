@@ -29,7 +29,7 @@ run_data <- readxl::read_xlsx("ex11-22.xlsx") %>%
 
 Regress 10.K (Y) on Treadmill (X) and include the “summary” information in your assignment.
 
-```{r reg_1a}
+```{r run_fit}
 run_fit <- lm(race_time ~ treadmill, data = run_data)
 summary(run_fit)
 ```
@@ -37,6 +37,15 @@ summary(run_fit)
 ## Part 1B
 
 Create a scatterplot of 10-K vs Treadmill with fitted regression line overlaid.
+
+```{r run_plot}
+run_data %>% 
+  ggplot(mapping = aes(x = race_time, y = treadmill)) + 
+  geom_point() 
+
+plot(treadmill ~ race_time, data = run_data)
+abline(lm(treadmill ~ race_time, data = run_data))
+```
 
 ## Part 1C
 
