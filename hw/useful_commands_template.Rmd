@@ -1,0 +1,94 @@
+---
+title: "useful_commands_template"
+author: "Caroline Wendt"
+date: "3/2/2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Change knit font
+```{r}
+# YAML
+# -\rnewcommand\familydefault{\sfdefault}
+```
+
+
+# Plotting with ggplot
+
+## plot
+```{r}
+
+# basic scatter/dot plot
+ggplot(lm_object_or_data_frame) + theme_bw() + 
+      geom_point(aes(x=something, y=something_else)) + 
+      xlab("predictor/treatment/group") + 
+      ylab("outcome") + 
+      ggtitle("Title")
+
+```
+
+## qq-plot (check normality)
+```{r}
+
+# normal qq plot
+ggplot() + theme_bw() + 
+      geom_qq(aes(sample = residuals(lm_object))) + 
+      labs(title = "Normal QQ Plot",
+               x = "Theoretical Quantiles", 
+               y = "Sample Quantiles") +
+      geom_qq_line(aes(sample = residuals(lm_object)), col = "red")
+
+```
+
+## residual plot (check equal variance/linearity)
+```{r}
+
+# residual plot (not-studentized)
+
+# residuals against fitted values
+something_df <- data.frame(res = residuals(lm_object), 
+                           fit = fitted(lm_object))
+
+residual_plot <- ggplot(something_df) + 
+                  geom_point(aes(x = fit, y = res)) + 
+                  xlab("Fitted Values") + ylab("Residuals") +
+                  ggtitle("Residual Plot")
+# smoother
+# + geom_smooth(aes(x = fit, y = res), method="loess", se=FALSE)
+ 
+```
+
+## residual plot - studentized (check equal variance/linearity)
+```{r}
+
+# residual plot (studentized)
+
+# baseplot for residuals v. fitted plots
+g_fitted_resid <- ggplot() + theme_bw() + 
+                  geom_hline(aes(yintercept = 0), lty = 2) + 
+                  xlab("Fitted Values") + ylab("Residuals")
+
+# studentized residual plot
+g_fitted_resid + geom_point(aes(x = fitted(lm_object), 
+                 y = rstudent(lm_object)), col = "skyblue3")
+
+```
+
+## residual histogram
+```{r}
+
+# histogram of residuals
+
+residual_hist <- ggplot(something_df, aes(x = res)) + 
+                  geom_histogram(bins = 25, 
+                                 col = "darkgrey", 
+                                 fill = "slateblue",
+                                 alpha = 0.9) +
+            labs(title = "Histogram of Residuals") +
+            labs(x = "Residuals", y = "Frequency")
+
+```
+
