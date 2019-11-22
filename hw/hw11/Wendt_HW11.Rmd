@@ -6,13 +6,21 @@ output:
   pdf_document: default
 ---
 
-# Load packages
-
-```{r packages, message = FALSE}
+```{r packages, include = FALSE}
 library(readxl)
 library(janitor)
 library(tidyverse)
 library(broom)
+library(car)
+```
+
+```{r global_options, include = FALSE}
+knitr::opts_chunk$set(fig.width = 6, 
+                      fig.height = 4, 
+                      fig.path = "figs/",
+                      echo = FALSE, 
+                      warning = FALSE, 
+                      message = FALSE)
 ```
 
 # Question 1
@@ -25,47 +33,123 @@ run_data <- readxl::read_xlsx("ex11-22.xlsx") %>%
   dplyr::rename("race_time" = "x10_k")
 ```
 
-## Part 1A
+## Part 1A: Data
 
 Regress 10.K (Y) on Treadmill (X) and include the “summary” information in your assignment.
 
 ```{r run_fit}
-run_fit <- lm(race_time ~ treadmill, data = run_data)
-summary(run_fit)
+run_lm <- lm(race_time ~ treadmill, data = run_data)
+summary(run_lm)
 ```
 
-## Part 1B
+\pagebreak
+
+## Part 1B: Scatterplot
 
 Create a scatterplot of 10-K vs Treadmill with fitted regression line overlaid.
 
 ```{r run_plot}
-run_data %>% 
-  ggplot(mapping = aes(x = race_time, y = treadmill)) + 
-  geom_point() 
-
-plot(treadmill ~ race_time, data = run_data)
-abline(lm(treadmill ~ race_time, data = run_data))
+run_lm %>% 
+  ggplot(aes(x = treadmill, y = race_time)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  xlab("Treadmill Time to Exhaustion") + 
+  ylab("10 km Race Times (min)") + 
+  ggtitle("Association between Time to Exhaustion and Race Times") +
+  theme_minimal() 
 ```
 
-## Part 1C
+## Part 1C: Slope
 
 Give the estimate, 95% confidence interval and interpretation of the slope. (4 pts)
 
+```{r tidy_run_fit}
+tidy_run_lm <- broom::tidy(run_lm)
+```
+
+### Estimate
+
+The estimate for the slope is `r tidy_run_lm$estimate[2]`.
+
+### 95% Confidence Interval 
+
+```{r run_slope_ci}
+tidy_run_slope_ci <- broom::tidy(confint(run_lm, level = 0.95)) %>% 
+  janitor::clean_names() %>% 
+  dplyr::filter(rownames == "treadmill")
+```
+
+The 95% confidence interval for the slope is (`r tidy_run_slope_ci[2]`, `r tidy_run_slope_ci[3]`).
+
+### Interpretation
+
+A difference of a one unit increase in treadmill time to exhaustion is, on average, associated with a `r tidy_run_lm$estimate[2]` minute decrease in 10 km race time in this sample. There is a negative, linear association between treadmill time to exhaustion and 10 km race time.
+
 ## Part 1D
 
-Give the R^2 value and interpretation in terms of this scenario.
+Give the $R^2$ value and interpretation in terms of this scenario.
+
+$R^2$ = 0.6807
+
+### Interpretation
+
+68% of the variance in 10 km run times can be attributed to the model relating treadmill time to exhaustion and 10 km run times.
 
 ## Part 1E
 
-Give the predicted 10.K time for a runner with Treadmill = 11. Also provide a corresponding prediction interval.
+Give the predicted 10.K time for a runner with Treadmill = 11. 
+
+```{r run_predict}
+runner <- dplyr::tibble(treadmill = 11)
+runner_pred <- broom::tidy(predict(object = run_lm,
+                                   runner,
+                                   interval = "confidence"))
+```
+
+`r runner_pred$fit` minutes
+
+Also provide a corresponding prediction interval.
+
+(`r runner_pred$lwr`, `r runner_pred$upr`)
 
 ## Part 1F
 
-Create the plots of (1) residuals vs fitted values and (2) qqplot of residuals
+Create the plots of (1) residuals vs fitted values and (2) qqplot of residuals.
+
+```{r run_res}
+run_res_fit <- dplyr::tibble(res = residuals(run_lm),
+                             fit = fitted(run_lm))
+
+run_res_fit %>%
+  ggplot(aes(x = fit, y = res)) +
+  geom_point() +
+  xlab("Fitted Values") + 
+  ylab("Residuals") +
+  ggtitle("Residual Plot for Run Data") +
+  theme_minimal()
+```
+
+```{r run_qq}
+run_data %>% 
+  ggplot(aes(sample = residuals(run_lm))) + 
+  geom_qq() +
+  geom_qq_line(aes(sample = residuals(run_lm)), 
+               col = "red") +
+  labs(title = "Normal QQ Plot for Run Data",
+       x = "Theoretical Quantiles",
+       y = "Sample Quantiles") +
+  theme_minimal()
+```
 
 ## Part 1G
 
 Based on the plots above, subject 13 appears to be a bit of an outlier. Run a formal outlier test for this observation. Provide the p-value and make a conclusion. Note that since we identified this observation after looking at the data, a Bonferonni adjustment is appropriate.
+
+```{r run_outlier}
+run_outlier <- car::outlierTest(run_lm)
+```
+
+Using `car::outlierTest` to identify the observation with the most extreme residual, the Bonferonni p-value for observation 13 is `r run_outlier$bonf.p` > $\alpha$ = 0.05. Based on this, we fail to reject the null hypothesis that observation 13 is NOT an outlier.
 
 # Question 2
 
