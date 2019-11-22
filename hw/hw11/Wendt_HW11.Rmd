@@ -28,7 +28,7 @@ knitr::opts_chunk$set(fig.width = 6,
 Review problem 11.22 from Ott & Longnecker regarding treadmill “time to exhaustion” (X) and 10km race times (Y).
 
 ```{r run_data}
-run_data <- readxl::read_xlsx("ex11-22.xlsx") %>% 
+run_data <- readxl::read_xlsx("data/ex11-22.xlsx") %>% 
   janitor::clean_names() %>% 
   dplyr::rename("race_time" = "x10_k")
 ```
@@ -151,19 +151,21 @@ run_outlier <- car::outlierTest(run_lm)
 
 Using `car::outlierTest` to identify the observation with the most extreme residual, the Bonferonni p-value for observation 13 is `r run_outlier$bonf.p` > $\alpha$ = 0.05. Based on this, we fail to reject the null hypothesis that observation 13 is NOT an outlier.
 
+\pagebreak
+
 # Question 2
 
 Data on age in coating Thickness (X) and Strength (Y) from an experiment involving steel are available from Canvas as Steel.csv.
 
-## Part 1A
+## Part 2A
 
 Regress Strength (Y) against Thick (X) and look at (1) the plot of Strength versus Thick (2) residuals versus predicted values and (3) qqplot of residuals. Include these plots in your assignment. Do the regression assumptions appear to be met? Discuss. (4 pts)
 
-## Part 1B
+## Part 2B
 
 Perform an F-test for “lack of fit”. Give your p-value and make a conclusion. (4 pts)
 
-## Part 1C
+## Part 2C
 
 Now perform a quadratic regression and create a scatterplot with the fitted curve overlaid. Include the “summary” table and plot in your assignment. This can be done with code like the following. (4 pts)
 
@@ -176,18 +178,20 @@ Now perform a quadratic regression and create a scatterplot with the fitted curv
 
 Note that b0,b1,b2 need to be *replaced* with estimates from the quadratic regression.
 
+\pagebreak
+
 # Question 3
 
 Review problem 11.50 from Ott & Longnecker regarding SAT Scores. 
 
-## Part 1A
+## Part 3A
 
 Create pairwise scatterplots for all 4 variables (Male.Verbal, Female.Verbal, Male.Math, Female.Math)
 
-## Part 1B
+## Part 3B
 
 Calculate pairwise (Pearson) correlations for all 4 variables. Which pair of variables has the strongest correlation? (4 pts)
 
-## Part 1C
+## Part 3C
 
 Provide a test of the correlation for Female.Verbal vs Female.Math. Give the p-value and conclusion in your assignment.
