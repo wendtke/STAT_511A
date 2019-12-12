@@ -1,0 +1,51 @@
+State,Region,BradyScore,HomicideRate,PerUrban,Poverty,MedAge,PerDgr
+Alabama,South,3.5,7.1,59.04,16,39,21.9
+Alaska,West,-7,4.1,66.02,12.2,34.3,27.9
+Arizona,West,-8,5.5,89.81,14.4,37.7,25.9
+Arkansas,South,1,5.9,56.16,15.5,38.1,19.5
+California,West,75,5,94.95,12.5,36.6,30.1
+Colorado,West,14.5,3.1,86.15,8.9,36.8,36.4
+Connecticut,Northeast,70,4.1,87.99,9.9,40.9,35.5
+Delaware,South,34.5,6.2,83.3,9.6,40.4,27.8
+Florida,South,3,5.2,91.16,13.6,42.1,25.8
+Georgia,South,2,5.9,75.07,14.7,36.7,27.3
+Hawaii,West,58.5,2.1,91.93,9.5,39,29.5
+Idaho,West,0,1.8,70.58,11.3,36.3,24.4
+Illinois,Midwest,45,5.8,88.49,10.9,38.1,30.8
+Indiana,Midwest,4.5,4.7,72.44,11.8,37.7,22.7
+Iowa,Midwest,14,1.5,64.02,9.2,38.1,24.9
+Kansas,Midwest,-4,2.9,74.2,10.8,36.6,29.8
+Kentucky,South,-3.5,4.5,58.38,15.3,38.8,20.5
+Louisiana,South,-2,10.8,73.19,19.8,36.8,21.4
+Maine,Northeast,3,1.9,38.66,12.6,44.7,26.8
+Maryland,South,66.5,6.3,87.2,7.1,38.7,36.1
+Massachusetts,Northeast,60.5,1.8,91.97,9.8,39.5,39
+Michigan,Midwest,15,7,74.57,11,39.8,25.2
+Minnesota,Midwest,19.5,1.8,73.27,8.7,37.9,31.8
+Mississippi,South,-4,7.4,49.35,19.8,37.4,19.5
+Missouri,Midwest,-0.5,6.5,70.44,11.9,38.6,25.6
+Montana,West,-3,2.7,55.89,10.4,39.8,28.8
+Nebraska,Midwest,6.5,2.9,73.13,10.4,36.4,28.6
+Nevada,West,1.5,4.5,94.2,12.2,37.9,21.7
+New Hampshire,Northeast,5.5,1.1,60.3,6.4,43.1,32.8
+New Jersey,Northeast,68.5,4.4,94.68,9.1,39.8,35.4
+New Mexico,West,0,5.6,77.43,18.7,37.8,25
+New York,Northeast,65.5,3.5,87.87,11.8,38.7,32.5
+North Carolina,South,1.5,4.9,66.09,14.1,38.7,26.5
+North Dakota,Midwest,2,4,59.9,10.9,35.1,27.6
+Ohio,Midwest,10,4.3,77.92,12.8,39.4,24.6
+Oklahoma,South,1,5.7,66.24,14,36.5,22.9
+Oregon,West,11,2.4,81.03,10.6,39.3,28.8
+Pennsylvania,Northeast,20,5.4,78.66,11.5,40.7,27.1
+Rhode Island,Northeast,41.5,3.2,90.73,10.3,39.9,30.2
+South Carolina,South,1,6.9,66.33,14.1,39.4,24.5
+South Dakota,Midwest,-4.5,3,56.65,11.8,37.1,26.3
+Tennessee,South,2,6,66.39,12.6,38.7,23.1
+Texas,South,1.5,4.4,84.7,13.7,34.6,25.9
+Utah,West,-2,1.8,90.58,7.9,30.9,29.3
+Vermont,Northeast,-4,1.3,38.9,9.6,42.9,33.6
+Virginia,South,7,3.8,75.45,10.7,38.2,34.2
+Washington,West,19.5,3,84.05,10.3,37.7,31.1
+West Virginia,South,3,3.9,48.72,17.2,42.5,17.5
+Wisconsin,Midwest,13,3,70.15,9.5,39.4,26.3
+Wyoming,West,-5,2.4,64.76,11.4,37.7,24.1

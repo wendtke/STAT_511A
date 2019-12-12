@@ -1,0 +1,28 @@
+---
+title: "STAT 511A Final Exam"
+author: "Kathleen Wendt"
+date: "12/18/2019"
+output:
+  pdf_document: default
+---
+
+```{r packages, include = FALSE}
+library(readxl)
+library(janitor)
+library(tidyverse)
+library(broom)
+library(car)
+library(kableExtra)
+```
+
+```{r global_options, include = FALSE}
+knitr::opts_chunk$set(fig.width = 6, 
+                      fig.height = 4, 
+                      fig.path = "figs/",
+                      echo = FALSE, 
+                      warning = FALSE, 
+                      message = FALSE)
+```
+
+# Question 1: 
+
