@@ -6,16 +6,13 @@ output:
   pdf_document: default
 ---
 
-```{r packages, include = FALSE}
-library(readxl)
-library(janitor)
-library(tidyverse)
-library(broom)
-library(car)
-library(kableExtra)
-```
+I have not given, received, or used any unauthorized assistance on this exam. 
+
+_**Kathleen E Wendt**_
 
 ```{r global_options, include = FALSE}
+# set global options
+library(knitr)
 knitr::opts_chunk$set(fig.width = 6, 
                       fig.height = 4, 
                       fig.path = "figs/",
@@ -24,5 +21,447 @@ knitr::opts_chunk$set(fig.width = 6,
                       message = FALSE)
 ```
 
-# Question 1: 
+```{r packages, include = FALSE}
+# load packages
+library(tidyverse)
+library(kableExtra)
+library(broom)
+library(car)
+library(coin)
+library(corrr)
+library(emmeans)
+```
 
+# Part A: Exercise and coronary artery calcium (CAC)
+
+```{r exer_data_A, include = FALSE}
+# A. read exercise data
+exercise_data <- readr::read_csv("data/Exercise.csv")
+```
+
+## Question 1: CAC table
+
+```{r exer_sum_1}
+# 1. create cacs summary table
+kableExtra::kable(
+  exercise_data %>%
+  dplyr::group_by(Group) %>% 
+  dplyr::summarize(n = n(),
+            cac_pos = sum(CACS_01),
+            mean_age = mean(Age),
+            min_meth = min(METh),
+            med_meth = median(METh),
+            max_meth = max(METh)) %>% 
+  dplyr::ungroup())
+```
+
+## Question 2: CAC graph
+
+```{r exer_graph_2}
+# 2. create histogram of cacs
+hist(exercise_data$CACS_score)
+```
+
+```{r cacs_summary_2}
+# 2. calculate cacs number summary
+summary(exercise_data$CACS_score)
+```
+
+## Question 3: Rationale for `CACS_01`
+
+Most subjects had a coronary artery calcium (CAC) score of 0, leading to high skewness and low variability. Furthermore, some analyses that might be of interest for these data could require a categorical predictor.
+
+## Question 4: CAC by sex
+
+```{r female_prop_4}
+# 4. calculate female proportion
+female_prop <- sum(exercise_data$Sex == "F" 
+                 & exercise_data$CACS_01 == 1) /
+  sum(exercise_data$Sex == "F") 
+```
+
+`r female_prop` of females tested positive for coronary artery calcium.
+
+```{r male_prop_4}
+# 4. calculate male proportion
+male_prop <- sum(exercise_data$Sex == "M"
+                 & exercise_data$CACS_01 == 1) / 
+  sum(exercise_data$Sex == "M") 
+```
+
+`r male_prop` of males tested positive for coronary artery calcium.
+
+## Question 5: Difference in CAC proportions
+
+### Research question
+
+Is there a sex difference in proportions of those with coronary artery calcium?
+
+### Approach
+
+- Predictor: `Sex` (categorical)
+- Response: `CACS_01` (categorical)
+- Selected test: Fisher's Exact Test 
+
+```{r pre_analysis_5}
+# 5. set up proportion table 
+cacs_sex_prop <- matrix(c(1, 19, 9, 14), 
+                    nrow = 2, 
+                    byrow = TRUE)
+rownames(cacs_sex_prop) <- c("females", "males")
+colnames(cacs_sex_prop) <- c("cac", "no_cac")
+# 5. create prop table to check proportions
+kableExtra::kable(prop.table(cacs_sex_prop, margin = 1))
+```
+
+```{r prop_5}
+# 5. conduct exact test for equality of proportions with small sample sizes
+cacs_fisher <- broom::tidy(fisher.test(x = cacs_sex_prop))
+```
+
+### Conclusion
+
+Based on Fisher's Exact Test for equality of proportions with small sample sizes, there is a difference in proportion of coronary artery calcium (CAC) by sex, such that males have a higher proportion of CAC compared to females. The corresponding p-value is `r cacs_fisher$p.value`, which is less than $\alpha$ = .05. 
+
+## Question 6: CAC graph by group
+
+```{r cacs_plot_6}
+# 6. create summary plot for cacs by group
+exercise_data %>% 
+  ggplot(aes(x = Group, y = CACS_score)) +
+  geom_point() +
+  theme_minimal()
+```
+
+## Question 7: Difference in CAC means
+
+### Research question
+
+Is there a difference between athletes and non-athletes in the level of coronary artery calcium?
+
+### Approach
+
+- Predictor: `Group` (categorical)
+- Response: `CACS_score` (continuous)
+- Selected test: Wilcoxon rank sum test (exact; non-parametric) 
+
+```{r pre_analysis_7, include = FALSE}
+# 7. coerce group to factor
+exercise_data$Group <- as.factor(exercise_data$Group)
+# 7. check assumption of equal variances
+car::leveneTest(CACS_score ~ Group, 
+                data = exercise_data, 
+                center = "median")
+# 7. check assumption of normality
+exercise_data %>% 
+  ggplot(aes(x = CACS_score)) +
+  facet_wrap("Group") +
+  geom_histogram() +
+  theme_minimal()
+shapiro.test(exercise_data$CACS_score)
+```
+
+```{r analysis_7, include = FALSE}
+# 7. conduct nonparametric wilcoxon rank sum test 
+coin::wilcox_test(CACS_score ~ Group,
+                  data = exercise_data,
+                  distribution = "exact")
+```
+
+### Conclusion
+
+Based on the Wilcoxon rank sum test using the exact distribution, there is no evidence to suggest a difference between groups (athletes and non-athletes) in mean coronary artery calcium level, although the group of athletes has a higher mean level (descriptively). The corresponding p-value is 0.06466, which is above $\alpha$ = .05. 
+
+## Question 8: Logistic regression
+
+### Research question
+
+Does the number of metabolic equivalent hours (METh) predict the presence of CAC?
+
+### Approach
+
+- Predictor: `METh` (continuous)
+- Response: `CACS_01` (categorical)
+- Selected test: Logistic regression
+
+```{r analysis_8, include = FALSE}
+# 8. conduct logistic regression
+cacs_glm <- glm(formula = CACS_01 ~ METh,
+                family = binomial(link = "logit"),
+                data = exercise_data)
+# 8. review glm summary
+summary(cacs_glm)
+```
+
+```{r glm_tidy_8}
+# 8. create tidy glm object 
+cacs_glm_tidy <- broom::tidy(cacs_glm)
+```
+
+```{r odds_8, message = FALSE, warning = FALSE}
+# 8. exponentiate for odds ratio estimate
+cacs_odds <- broom::tidy(exp(cacs_glm$coefficients))
+# 8. exponentiate for OR CI estimate
+cacs_odds_ci <- broom::tidy(exp(confint(cacs_glm)))
+```
+
+### Conclusion
+
+Logistic regression yielded a model-based estimate of odds ratio of `r cacs_odds$x[2]` with a corresponding 95% confidence interval of (`r cacs_odds_ci$X2.5..[2]`, `r cacs_odds_ci$X97.5..[2]`). Every one unit increase in metabolic equivalent hours per week (METh) multiplies the odds of coronary artery calcium by `r cacs_odds$x[2]`. METh was a significant predictor of CAC, _p_ = `r cacs_glm_tidy$p.value[2]` < $\alpha$ = .05.
+
+## Question 9: METh & Group
+
+One variable (`Group`) was derived from the other (`METh`). Subjects were split into group (athletes vs. non-athletes) based on their metabolic equivalent hours (METh) per week from their physical activity diaries; the control group  had METh below 60, and the athlete group had METh equal to or above 60. A formal test of these variables would not reveal any new information.
+
+\newpage 
+
+# Part B: Chocolate
+
+## Question 10: Sample size for two-sample design
+
+```{r choc_power_10, include = FALSE}
+# 10. power calculation for two-sample, two-sided t-test
+power.t.test(delta = 0.63,
+             sd = 1.5,
+             sig.level = 0.05, 
+             power = 0.80,
+             type = "two.sample", 
+             alternative = "two.sided")
+```
+
+90 subjects per group are needed to achieve 80% power for a two-sample, two-sided t-test.
+
+## Question 11: Standard error of difference in means
+
+Based on _df_ = 15 and two-sided p-value of 0.01, the test statistic is approximately 2.947; therefore, the standard error of the difference in means is `r 0.63/2.947`, and the corresponding sample standard deviation of the differences in means is `r 4*(0.63/2.947)`.
+
+\newpage
+
+# Part C: Guns
+
+```{r gun_data, include = FALSE}
+# C. read gun data
+gun_data <- readr::read_csv("data/GunData.csv")
+```
+
+## Question 12: Brady score
+
+```{r brady_graph_12}
+# 12. create histogram for brady score
+hist(gun_data$BradyScore)
+```
+
+```{r brady_min_12, include = FALSE}
+# 12. filter to state with minimum brady score 
+min(gun_data$BradyScore)
+gun_data %>% dplyr::filter(BradyScore == "-8")
+```
+
+Arizona has the lowest Brady score (-8), indicating a low level of gun restriction.
+
+```{r brady_max_12, include = FALSE}
+# 12. filter to state with maximum brady score 
+max(gun_data$BradyScore)
+gun_data %>% dplyr::filter(BradyScore == "75")
+```
+
+California has the highest Brady score (75), indicating a high level of gun restriction.
+
+## Question 13: Homicide rate
+
+```{r hist_hom_13}
+# 13. create histogram for homicide rate
+hist(gun_data$HomicideRate)
+```
+
+```{r hom_min_13, include = FALSE}
+# 13. filter to state with minimum homicide rate 
+min(gun_data$HomicideRate)
+gun_data %>% dplyr::filter(HomicideRate == "1.1")
+```
+
+New Hampshire has the lowest homicide rate (1.1 homicides per 100,000).
+
+```{r hom_max_13, include = FALSE}
+# 13. filter to state with maximum homicide rate
+max(gun_data$HomicideRate)
+gun_data %>% dplyr::filter(HomicideRate == "10.8")
+```
+
+Louisiana has the highest homicide rate (10.8 homicides per 100,000).
+
+## Question 14: Simple linear regression
+
+```{r guns_lm_14}
+# 14. fit linear model regressing brady score on homicide rate
+guns_lm <- lm(HomicideRate ~ BradyScore, data = gun_data)
+guns_lm_tidy <- broom::tidy(guns_lm)
+```
+
+### 14A: Scatterplot
+
+```{r brady_hom_14a}
+# 14a. plot brady scores and homicide rates with regression line
+gun_data %>% 
+  ggplot(aes(x = BradyScore, y = HomicideRate)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  ggtitle("Association between Brady Score and Homicide Rate") +
+  theme_minimal() 
+```
+
+### 14B: Slope estimate
+
+The model-based estimate of the slope is `r guns_lm_tidy$estimate[2]` with a corresponding p-value of `r guns_lm_tidy$p.value[2]`. 
+
+### 14C: Conclusion
+
+We cannot conclude there is a linear association between homicide rate and Brady score. There is no evidence to suggest that the level of gun restriction, as measured by Brady score, is related to homicide rate in the United States of America, excluding Washington, D.C. 
+
+### 14D: Multiple R-squared
+
+```{r guns_lm_rsq_14d, include = FALSE}
+# 14d. check multiple R-squared value 
+summary(guns_lm)
+```
+
+As indicated by the multiple $R^2$ value, 0.004086 of the variation in homicide rate is explained by the linear model of Brady score and homicide rate.
+
+## Question 15: Checking assumptions
+
+```{r guns_lm_plots_15, include = FALSE}
+# 15. check plot of residuals vs fitted values for guns_lm
+plot(guns_lm, which = 1)
+```
+
+### 15A: Outlying residual
+
+```{r gun_max_res_15a, include = FALSE}
+# 15a. extract observation 18
+gun_data %>% slice(18)
+# 15a. compare predicted and actual homicide rate for Louisiana 
+predict(guns_lm)
+```
+
+Louisiana has the largest magnitude residual. There are _more_ homicides (10.8 per 100,000) in Louisiana than expected based on the model (4.347 per 100,000).
+
+### 15B: Outlier test
+
+```{r gun_outlier_15b}
+# 15b. conduct outlier test for Louisiana
+gun_outlier <- car::outlierTest(guns_lm)
+```
+
+The Bonferonni adjusted p-value for observation 18 (Louisiana) is `r gun_outlier$bonf.p` < $\alpha$ = 0.05. There is evidence to suggest Louisiana is an outlier in terms of homicide rate. A Bonferonni adjustment is appropriate because multiple tests (one for each state) were conducted before confirming the outlier.
+
+### 15C: Drop Louisiana and re-run analysis
+
+```{r drop_la_15c}
+# 15c. drop Louisiana
+gun_data_dropla <- gun_data %>% dplyr::filter(State != "Louisiana")
+# 15c. re-run simple linear regression from Q14
+guns_lm_nola <- lm(HomicideRate ~ BradyScore, data = gun_data_dropla)
+# 15c. tidy lm 
+guns_lm_nola_tidy <- broom::tidy(guns_lm_nola)
+```
+
+After removing Louisiana from the gun data and re-running the linear model regressing Brady score on homicide rate, the slope estimate is `r guns_lm_nola_tidy$estimate[2]`, and the corresponding p-value is `r guns_lm_nola_tidy$p.value[2]`. Based on this updated model, we still cannot conclude there is a linear association between gun restriction (Brady score) and homicide rate. Removing the outlier (Louisiana) did not change the ultimate conclusions of this model.
+
+## Question 16: Homicide rate and demographic variables
+
+### 16A: Correlation matrix
+
+```{r demo_corr_16, message = FALSE}
+# 16a. create correlation matrix of homicide rate with demo vars
+gun_demo_corr <- gun_data %>%
+  dplyr::select(HomicideRate, PerUrban, Poverty, MedAge, PerDgr) %>%
+  corrr::correlate()
+# 16a. kable correlation matrix
+kableExtra::kable(gun_demo_corr)
+```
+
+### 16B: Strongest correlate
+
+Poverty is the most strongly (positively) correlated with homicide rate, _r_ = `r gun_demo_corr$HomicideRate[3]`. 
+
+## Question 17: Multiple regression
+
+```{r gun_mult_lm_17}
+# 17. fit multiple regression model
+gun_mult_lm <- lm(HomicideRate ~ BradyScore 
+                  + PerUrban + Poverty + MedAge + PerDgr, 
+                  data = gun_data)
+# 17. tidy multiple regression output
+gun_mult_lm_tidy <- broom::tidy(gun_mult_lm)
+```
+
+### 17A: Slope estimate
+
+The multiple regression model yielded a slope estimate of `r gun_mult_lm_tidy$estimate[2]` and corresponding p-value of `r gun_mult_lm_tidy$p.value[2]` for Brady score.
+
+### 17B: Multiple R-squared
+
+```{r gun_mult_rsq_17b, include = FALSE}
+# 17b. check multiple R-squared value
+summary(gun_mult_lm)
+```
+
+As indicated by the multiple $R^2$ value, 0.5064 of the variation in homicide rate is explained by the multiple regression model.
+
+## Question 18: One-way ANOVA
+
+```{r gun_anova_18}
+# 18. create lm object with homicide rate and region
+gun_reg_lm <- lm(HomicideRate ~ Region, data = gun_data)
+# 18. fit and tidy anova model
+gun_anova_tidy <- broom::tidy(anova(gun_reg_lm))
+```
+
+### 18A: Box plot
+
+```{r gun_boxplot_18a}
+# 18a. create boxplot for homicide rate by region
+gun_data %>% 
+  ggplot(aes(x = Region, y = HomicideRate)) +
+  geom_boxplot() + 
+  ggtitle("Homicide rate by American region") +
+  theme_minimal()
+```
+
+### 18B: ANOVA table
+
+```{r gun_anova_tab_18b}
+# 18b. show anova table
+anova(gun_reg_lm)
+```
+
+### 18C: Pairwise comparisons
+
+```{r pairwise_prep_18c}
+# 18c. convert region to factor
+gun_data <- gun_data %>% dplyr::mutate(Region = as.factor(Region))
+```
+
+```{r tukey_pairs_18c, include = FALSE}
+# 18c. conduct tukey-adjusted pairwise comparisons
+gun_emout <- emmeans(gun_reg_lm, pairwise ~ Region)
+# 18c. examine contrasts
+gun_emout$contrasts
+# 18c. create compact letter display
+CLD(gun_emout$emmeans)
+```
+
+Based on Tukey-adjusted pairwise comparisons, the South has a higher homicide rate compared to each of the three other regions: 
+
+- Midwest, _p_ = 0.0120
+- Northeast, _p_ = 0.0003
+- West, _p_ = 0.0006
+
+There are no differences between the Midwest, Northeast, and West in homicide rate.
+
+\newpage
+
+# Appendix
+
+```{r show_code, ref.label = all_labels(), echo = TRUE, eval = FALSE}
+```
